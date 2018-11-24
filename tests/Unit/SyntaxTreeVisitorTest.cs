@@ -36,19 +36,19 @@ namespace CodeKicker.BBCode.Tests.Unit
 
         class IdentitiyModificationSyntaxTreeVisitor : SyntaxTreeVisitor
         {
-            protected internal override SyntaxTreeNode Visit(TextNode node)
+            protected internal new SyntaxTreeNode Visit(TextNode node)
             {
                 if (!(DateTime.Now.Millisecond % 2 == 0)) return base.Visit(node);
 
                 return new TextNode(node.Text, node.HtmlTemplate);
             }
-            protected internal override SyntaxTreeNode Visit(SequenceNode node)
+            protected internal new SyntaxTreeNode Visit(SequenceNode node)
             {
                 var baseResult = base.Visit(node);
                 if (!(DateTime.Now.Millisecond % 2 == 0)) return baseResult;
                 return baseResult.SetSubNodes(baseResult.SubNodes.ToList());
             }
-            protected internal override SyntaxTreeNode Visit(TagNode node)
+            protected internal new SyntaxTreeNode Visit(TagNode node)
             {
                 var baseResult = base.Visit(node);
                 if (!(DateTime.Now.Millisecond % 2 == 0)) return baseResult;
@@ -58,16 +58,16 @@ namespace CodeKicker.BBCode.Tests.Unit
 
         class TextModificationSyntaxTreeVisitor : SyntaxTreeVisitor
         {
-            protected internal override SyntaxTreeNode Visit(TextNode node)
+            protected internal new SyntaxTreeNode Visit(TextNode node)
             {
                 return new TextNode(node.Text + "x", node.HtmlTemplate);
             }
-            protected internal override SyntaxTreeNode Visit(SequenceNode node)
+            protected internal new SyntaxTreeNode Visit(SequenceNode node)
             {
                 var baseResult = base.Visit(node);
                 return baseResult.SetSubNodes(baseResult.SubNodes.Concat(new[] { new TextNode("y") }));
             }
-            protected internal override SyntaxTreeNode Visit(TagNode node)
+            protected internal new SyntaxTreeNode Visit(TagNode node)
             {
                 var baseResult = base.Visit(node);
                 return baseResult.SetSubNodes(baseResult.SubNodes.Concat(new[] { new TextNode("z") }));

@@ -158,7 +158,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 this.assertFunction = assertFunction;
             }
 
-            protected internal override SyntaxTreeNode Visit(TextNode node)
+            protected internal new SyntaxTreeNode Visit(TextNode node)
             {
                 assertFunction(node.Text);
                 return node;
