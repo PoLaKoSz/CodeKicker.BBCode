@@ -6,7 +6,7 @@ using CodeKicker.BBCode.SyntaxTree;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Tests2
+namespace CodeKicker.BBCode.Tests.Unit
 {
     public static class BBCodeTestUtil
     {

@@ -8,8 +8,8 @@
     <ProjectGuid>{3E76347E-B598-4F3B-9B13-8623466D7D06}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CodeKicker.BBCode.Tests</RootNamespace>
-    <AssemblyName>CodeKicker.BBCode.Tests</AssemblyName>
+    <RootNamespace>CodeKicker.BBCode.Tests.Unit</RootNamespace>
+    <AssemblyName>UnitTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -53,7 +53,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Pex.Framework, Version=0.94.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -69,7 +71,7 @@
     <Compile Include="SyntaxTreeVisitorTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CodeKicker.BBCode\CodeKicker.BBCode.csproj">
+    <ProjectReference Include="..\..\CodeKicker.BBCode\CodeKicker.BBCode.csproj">
       <Project>{1C8A5FB6-633A-43BD-B1B7-75A0DDC308F5}</Project>
       <Name>CodeKicker.BBCode</Name>
     </ProjectReference>

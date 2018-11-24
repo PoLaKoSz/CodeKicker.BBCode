@@ -6,7 +6,7 @@ using CodeKicker.BBCode.SyntaxTree;
 using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Tests2
+namespace CodeKicker.BBCode.Tests.Unit
 {
     [TestClass]
     [PexClass(MaxRuns = 1000000000, MaxRunsWithoutNewTests = 1000000000, Timeout = 1000000000, MaxExecutionTreeNodes = 1000000000, MaxBranches = 1000000000, MaxWorkingSet = 1000000000, MaxConstraintSolverMemory = 1000000000, MaxStack = 1000000000, MaxConditions = 1000000000)]
