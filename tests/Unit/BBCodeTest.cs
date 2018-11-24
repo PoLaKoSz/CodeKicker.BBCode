@@ -3,17 +3,15 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
     [TestClass]
-    [PexClass(MaxRuns = 1000000000, MaxRunsWithoutNewTests = 1000000000, Timeout = 1000000000, MaxExecutionTreeNodes = 1000000000, MaxBranches = 1000000000, MaxWorkingSet = 1000000000, MaxConstraintSolverMemory = 1000000000, MaxStack = 1000000000, MaxConditions = 1000000000)]
     public partial class BBCodeTest
     {
-        [PexMethod]
-        public void DefaultParserWellconfigured([PexAssumeNotNull] string input)
+        [TestMethod]
+        public void DefaultParserWellconfigured(string input)
         {
             try
             {
@@ -24,22 +22,22 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        [PexMethod]
-        public void Escape_NoCrash([PexAssumeNotNull] string text, out string escaped)
+        [TestMethod]
+        public void Escape_NoCrash(string text, out string escaped)
         {
             escaped = BBCode.EscapeText(text);
         }
 
-        [PexMethod]
-        public void Escape_Unescape_Roundtrip([PexAssumeNotNull] string text)
+        [TestMethod]
+        public void Escape_Unescape_Roundtrip(string text)
         {
             var escaped = BBCode.EscapeText(text);
             var unescaped = BBCode.UnescapeText(escaped);
             Assert.AreEqual(text, unescaped);
         }
 
-        [PexMethod]
-        public void EscapedStringIsSafeForParsing([PexAssumeNotNull] string text)
+        [TestMethod]
+        public void EscapedStringIsSafeForParsing(string text)
         {
             var escaped = BBCode.EscapeText(text);
 
@@ -51,8 +49,8 @@ namespace CodeKicker.BBCode.Tests.Unit
                 Assert.AreEqual(text, ((TextNode)ast.SubNodes.Single()).Text);
         }
 
-        [PexMethod]
-        public void Escape_Parse_ToText_Roundtrip([PexAssumeNotNull] string text)
+        [TestMethod]
+        public void Escape_Parse_ToText_Roundtrip(string text)
         {
             var escaped = BBCode.EscapeText(text);
             var unescaped = GetSimpleParser().ParseSyntaxTree(escaped);
@@ -92,7 +90,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(expected, tree2.ToBBCode());
         }
 
-        [PexMethod]
+        [TestMethod]
         public void ReplaceTextSpans_WhenNoModifications_TreeIsPreserved()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -100,7 +98,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreSame(tree1, tree2);
         }
 
-        [PexMethod]
+        [TestMethod]
         public void ReplaceTextSpans_WhenEmptyModifications_TreeIsPreserved()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -108,7 +106,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(tree1.ToBBCode(), tree2.ToBBCode());
         }
 
-        [PexMethod]
+        [TestMethod]
         public void ReplaceTextSpans_WhenEverythingIsConvertedToX_OutputContainsOnlyX_CheckedWithContains()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -116,7 +114,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(!tree2.ToBBCode().Contains("a"));
         }
 
-        [PexMethod]
+        [TestMethod]
         public void ReplaceTextSpans_WhenEverythingIsConvertedToX_OutputContainsOnlyX_CheckedWithTreeWalk()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -124,29 +122,31 @@ namespace CodeKicker.BBCode.Tests.Unit
             new TextAssertVisitor(str => Assert.IsTrue(str == "x")).Visit(tree2);
         }
 
-        [PexMethod(MaxConstraintSolverTime = 4)]
+        [TestMethod]
         public void ReplaceTextSpans_ArbitraryTextSpans_NoCrash()
         {
-            var tree1 = BBCodeTestUtil.GetAnyTree();
-            var chosenTexts = new List<string>();
-            var tree2 = BBCode.ReplaceTextSpans(tree1, txt =>
-                {
-                    var count = PexChoose.ValueFromRange("count", 0, 3);
-                    var indexes = PexChoose.Array<int>("indexes", count);
-                    PexAssume.TrueForAll(0, count, i => indexes[i] >= 0 && indexes[i] <= txt.Length && (i == 0 || indexes[i - 1] < indexes[i]));
-                    return
-                        Enumerable.Range(0, count)
-                            .Select(i =>
-                                {
-                                    var maxIndex = i == count - 1 ? txt.Length : indexes[i + 1];
-                                    var text = PexChoose.ValueNotNull<string>("text");
-                                    chosenTexts.Add(text);
-                                    return new TextSpanReplaceInfo(indexes[i], PexChoose.ValueFromRange("count", 0, indexes[i] - maxIndex + 1), new TextNode(text));
-                                })
-                            .ToArray();
-                }, null);
-            var bbCode = tree2.ToBBCode();
-            PexAssert.TrueForAll(chosenTexts, s => bbCode.Contains(s));
+            //var tree1 = BBCodeTestUtil.GetAnyTree();
+            //var chosenTexts = new List<string>();
+            //var tree2 = BBCode.ReplaceTextSpans(tree1, txt =>
+            //    {
+            //        var count = BBCodeTestUtil.Random.Next(0, 3);
+            //        var indexes = PexChoose.Array<int>("indexes", count);
+            //        PexAssume.TrueForAll(0, count, i => indexes[i] >= 0 && indexes[i] <= txt.Length && (i == 0 || indexes[i - 1] < indexes[i]));
+            //        return
+            //            Enumerable.Range(0, count)
+            //                .Select(i =>
+            //                    {
+            //                        var maxIndex = i == count - 1 ? txt.Length : indexes[i + 1];
+            //                        var text = PexChoose.ValueNotNull<string>("text");
+            //                        chosenTexts.Add(text);
+            //                        return new TextSpanReplaceInfo(indexes[i], BBCodeTestUtil.Random.Next(0, indexes[i] - maxIndex + 1), new TextNode(text));
+            //                    })
+            //                .ToArray();
+            //    }, null);
+            //var bbCode = tree2.ToBBCode();
+            //PexAssert.TrueForAll(chosenTexts, s => bbCode.Contains(s));
+
+            Assert.Fail("This method should be re-implemented!");
         }
 
         class TextAssertVisitor : SyntaxTreeVisitor

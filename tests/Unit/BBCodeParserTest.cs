@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
     [TestClass]
-    [PexClass(MaxRuns = 1000000000, MaxRunsWithoutNewTests = 1000000000, Timeout = 1000000000, MaxExecutionTreeNodes = 1000000000, MaxBranches = 1000000000, MaxWorkingSet = 1000000000, MaxConstraintSolverMemory = 1000000000, MaxStack = 1000000000, MaxConditions = 1000000000)]
     public partial class BBCodeParserTest
     {
         [TestMethod]
@@ -135,11 +133,12 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         //the parser may never ever throw an exception other that BBCodeParsingException for any non-null input
-        [PexMethod]
-        public void NoCrash(ErrorMode errorMode, [PexAssumeNotNull] string input, BBTagClosingStyle listItemBbTagClosingStyle, out string output)
+        [TestMethod]
+        public void NoCrash(ErrorMode errorMode, string input, BBTagClosingStyle listItemBbTagClosingStyle, out string output)
         {
-            PexAssume.EnumIsDefined(errorMode);
-            PexAssume.EnumIsDefined(listItemBbTagClosingStyle);
+            Assert.IsNotNull(errorMode);
+            Assert.IsNotNull(listItemBbTagClosingStyle);
+
             try
             {
                 output = BBEncodeForTest(input, errorMode, listItemBbTagClosingStyle, false);
@@ -152,77 +151,76 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        [PexMethod]
-        public void ErrorFreeModeAlwaysSucceeds([PexAssumeNotNull] string input, out string output)
+        [TestMethod]
+        public void ErrorFreeModeAlwaysSucceeds(string input, out string output)
         {
             output = BBEncodeForTest(input, ErrorMode.ErrorFree);
         }
 
         //no script-tags may be contained in the output under any circumstances
-        [PexMethod]
-        public void NoScript_AnyInput(ErrorMode errorMode, [PexAssumeNotNull] string input)
+        [TestMethod]
+        public void NoScript_AnyInput(ErrorMode errorMode, string input)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
             try
             {
                 var output = BBEncodeForTest(input, errorMode);
-                PexAssert.IsTrue(!output.Contains("<script"));
+                Assert.IsTrue(!output.Contains("<script"));
             }
             catch (BBCodeParsingException)
             {
-                PexAssume.Fail();
+                Assert.Fail();
             }
         }
 
         //no script-tags may be contained in the output under any circumstances
-        [PexMethod]
+        [TestMethod]
         public void NoScript_AnyInput_Tree()
         {
             var parser = BBCodeTestUtil.GetParserForTest(ErrorMode.ErrorFree, true, BBTagClosingStyle.AutoCloseElement, false);
             var tree = BBCodeTestUtil.CreateRootNode(parser.Tags.ToArray());
             var output = tree.ToHtml();
-            PexAssert.IsTrue(!output.Contains("<script"));
+            Assert.IsTrue(!output.Contains("<script"));
         }
 
         //no html-chars may be contained in the output under any circumstances
-        [PexMethod]
-        public void NoHtmlChars_AnyInput(ErrorMode errorMode, [PexAssumeNotNull] string input)
+        [TestMethod]
+        public void NoHtmlChars_AnyInput(ErrorMode errorMode, string input)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
             try
             {
                 var output = BBCodeTestUtil.SimpleBBEncodeForTest(input, errorMode);
-                PexObserve.ValueForViewing("output", output);
-                PexAssert.IsTrue(output.IndexOf('<') == -1);
-                PexAssert.IsTrue(output.IndexOf('>') == -1);
+                Assert.IsTrue(output.IndexOf('<') == -1);
+                Assert.IsTrue(output.IndexOf('>') == -1);
             }
             catch (BBCodeParsingException)
             {
-                PexAssume.Fail();
+                Assert.Fail();
             }
         }
 
-        [PexMethod]
+        [TestMethod]
         public void NoScript_FixedInput(ErrorMode errorMode)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
             Assert.IsFalse(BBEncodeForTest("<script>", errorMode).Contains("<script"));
         }
 
-        [PexMethod]
+        [TestMethod]
         public void NoScriptInAttributeValue(ErrorMode errorMode)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
             var encoded = BBEncodeForTest("[url=<script>][/url]", errorMode);
             Assert.IsFalse(encoded.Contains("<script"));
         }
 
         //1. given a syntax tree, encode it in BBCode, parse it back into a second syntax tree and ensure that both are exactly equal
         //2. given any syntax tree, the BBCode it represents must be parsable without error
-        [PexMethod]
+        [TestMethod]
         public void Roundtrip(ErrorMode errorMode, out string bbcode, out string output)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
 
             var parser = BBCodeTestUtil.GetParserForTest(errorMode, false, BBTagClosingStyle.AutoCloseElement, false);
             var tree = BBCodeTestUtil.CreateRootNode(parser.Tags.ToArray());
@@ -233,10 +231,10 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         //given a BBCode-string, parse it into a syntax tree, encode the tree in BBCode, parse it back into a second sytax tree and ensure that both are exactly equal
-        [PexMethod]
-        public void Roundtrip2(ErrorMode errorMode, [PexAssumeNotNull] string input, out string bbcode, out string output)
+        [TestMethod]
+        public void Roundtrip2(ErrorMode errorMode, string input, out string bbcode, out string output)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
 
             var parser = BBCodeTestUtil.GetParserForTest(errorMode, false, BBTagClosingStyle.AutoCloseElement, false);
             SequenceNode tree;
@@ -248,7 +246,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             catch (BBCodeParsingException e)
 #pragma warning restore 168
             {
-                PexAssume.Fail();
+                Assert.Fail();
                 tree = null;
             }
 
@@ -258,10 +256,10 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(tree == tree2);
         }
 
-        [PexMethod]
-        public void TextNodesCannotBeSplit(ErrorMode errorMode, [PexAssumeNotNull] string input)
+        [TestMethod]
+        public void TextNodesCannotBeSplit(ErrorMode errorMode, string input)
         {
-            PexAssume.EnumIsDefined(errorMode);
+            Assert.IsNotNull(errorMode);
 
             var parser = BBCodeTestUtil.GetParserForTest(errorMode, true, BBTagClosingStyle.AutoCloseElement, false);
             SequenceNode tree;
@@ -273,7 +271,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             catch (BBCodeParsingException e)
 #pragma warning restore 168
             {
-                PexAssume.Fail();
+                Assert.Fail();
                 return;
             }
 
@@ -299,13 +297,14 @@ namespace CodeKicker.BBCode.Tests.Unit
         {
             return BBEncodeForTest(bbCode, errorMode, BBTagClosingStyle.AutoCloseElement, false);
         }
+
         public static string BBEncodeForTest(string bbCode, ErrorMode errorMode, BBTagClosingStyle listItemBbTagClosingStyle, bool enableIterationElementBehavior)
         {
             return BBCodeTestUtil.GetParserForTest(errorMode, true, listItemBbTagClosingStyle, enableIterationElementBehavior).ToHtml(bbCode).Replace("\r", "").Replace("\n", "<br/>");
         }
 
-        [PexMethod]
-        public void ToTextDoesNotCrash([PexAssumeNotNull] string input, out string text)
+        [TestMethod]
+        public void ToTextDoesNotCrash(string input, out string text)
         {
             var parser = BBCodeTestUtil.GetParserForTest(ErrorMode.ErrorFree, true, BBTagClosingStyle.AutoCloseElement, false);
             text = parser.ParseSyntaxTree(input).ToText();

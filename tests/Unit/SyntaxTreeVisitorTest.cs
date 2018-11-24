@@ -3,16 +3,14 @@ using System.Text;
 using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.Pex.Framework;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
     [TestClass]
-    [PexClass(typeof(SyntaxTreeVisitor), MaxRuns = 1000000000, MaxRunsWithoutNewTests = 1000000000, Timeout = 1000000000, MaxExecutionTreeNodes = 1000000000, MaxBranches = 1000000000, MaxWorkingSet = 1000000000, MaxConstraintSolverMemory = 1000000000, MaxStack = 1000000000, MaxConditions = 1000000000)]
     public partial class SyntaxTreeVisitorTest
     {
-        [PexMethod]
+        [TestMethod]
         public void DefaultVisitorModifiesNothing()
         {
             var tree = BBCodeTestUtil.GetAnyTree();
@@ -20,7 +18,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(ReferenceEquals(tree, tree2));
         }
 
-        [PexMethod]
+        [TestMethod]
         public void IdentityModifiedTreesAreEqual()
         {
             var tree = BBCodeTestUtil.GetAnyTree();
@@ -28,7 +26,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(tree == tree2);
         }
 
-        [PexMethod]
+        [TestMethod]
         public void TextModifiedTreesAreNotEqual()
         {
             var tree = BBCodeTestUtil.GetAnyTree();
@@ -40,20 +38,20 @@ namespace CodeKicker.BBCode.Tests.Unit
         {
             protected internal override SyntaxTreeNode Visit(TextNode node)
             {
-                if (!PexChoose.Value<bool>("x")) return base.Visit(node);
+                if (!(DateTime.Now.Millisecond % 2 == 0)) return base.Visit(node);
 
                 return new TextNode(node.Text, node.HtmlTemplate);
             }
             protected internal override SyntaxTreeNode Visit(SequenceNode node)
             {
                 var baseResult = base.Visit(node);
-                if (!PexChoose.Value<bool>("x")) return baseResult;
+                if (!(DateTime.Now.Millisecond % 2 == 0)) return baseResult;
                 return baseResult.SetSubNodes(baseResult.SubNodes.ToList());
             }
             protected internal override SyntaxTreeNode Visit(TagNode node)
             {
                 var baseResult = base.Visit(node);
-                if (!PexChoose.Value<bool>("x")) return baseResult;
+                if (!(DateTime.Now.Millisecond % 2 == 0)) return baseResult;
                 return baseResult.SetSubNodes(baseResult.SubNodes.ToList());
             }
         }
