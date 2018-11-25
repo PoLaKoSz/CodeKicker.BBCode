@@ -69,7 +69,7 @@
     <Compile Include="SyntaxTreeVisitorTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CodeKicker.BBCode\CodeKicker.BBCode.csproj">
+    <ProjectReference Include="..\..\src\CodeKicker.BBCode.csproj">
       <Project>{1C8A5FB6-633A-43BD-B1B7-75A0DDC308F5}</Project>
       <Name>CodeKicker.BBCode</Name>
     </ProjectReference>
