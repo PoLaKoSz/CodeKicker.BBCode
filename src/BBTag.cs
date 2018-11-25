@@ -71,18 +71,4 @@ namespace CodeKicker.BBCode
             return Array.Find(Attributes, a => a.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
         }
     }
-
-    public enum BBTagClosingStyle
-    {
-        RequiresClosingTag = 0,
-        AutoCloseElement = 1,
-        LeafElementWithoutContent = 2, //leaf elements have no content - they are closed immediately
-    }
-
-    public enum HtmlEncodingMode
-    {
-        HtmlEncode = 0,
-        HtmlAttributeEncode = 1,
-        UnsafeDontEncode = 2,
-    }
 }

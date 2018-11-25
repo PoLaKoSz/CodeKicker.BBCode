@@ -25,11 +25,4 @@ namespace CodeKicker.BBCode
             return string.Format(_resMgr.GetString(key), parameters);
         }
     }
-
-    /// <summary>
-    /// reflection-only use
-    /// </summary>
-    static class Messages
-    {
-    }
 }

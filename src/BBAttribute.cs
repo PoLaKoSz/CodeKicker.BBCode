@@ -39,10 +39,4 @@ namespace CodeKicker.BBCode
             return contentTransformer == null ? (Func<IAttributeRenderingContext, string>)null : ctx => contentTransformer(ctx.AttributeValue);
         }
     }
-    public interface IAttributeRenderingContext
-    {
-        BBAttribute Attribute { get; }
-        string AttributeValue { get; }
-        string GetAttributeValueByID(string id);
-    }
 }
