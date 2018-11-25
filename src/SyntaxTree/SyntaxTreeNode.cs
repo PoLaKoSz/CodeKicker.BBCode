@@ -5,17 +5,52 @@ namespace CodeKicker.BBCode.SyntaxTree
 {
     public abstract class SyntaxTreeNode : IEquatable<SyntaxTreeNode>
     {
+        //not null
+        public ISyntaxTreeNodeCollection SubNodes { get; private set; }
+
+
+
         protected SyntaxTreeNode()
         {
             SubNodes = new SyntaxTreeNodeCollection();
         }
+
         protected SyntaxTreeNode(ISyntaxTreeNodeCollection subNodes)
         {
             SubNodes = subNodes ?? new SyntaxTreeNodeCollection();
         }
+
         protected SyntaxTreeNode(IEnumerable<SyntaxTreeNode> subNodes)
         {
             SubNodes = subNodes == null ? new SyntaxTreeNodeCollection() : new SyntaxTreeNodeCollection(subNodes);
+        }
+
+
+
+        public abstract string ToHtml();
+
+        public abstract string ToBBCode();
+
+        public abstract string ToText();
+
+        public abstract SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes);
+
+
+        internal abstract SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor);
+
+
+        protected abstract bool EqualsCore(SyntaxTreeNode b);
+
+
+        //equality members
+        public bool Equals(SyntaxTreeNode other)
+        {
+            return this == other;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as SyntaxTreeNode);
         }
 
         public override string ToString()
@@ -23,26 +58,6 @@ namespace CodeKicker.BBCode.SyntaxTree
             return ToBBCode();
         }
 
-        //not null
-        public ISyntaxTreeNodeCollection SubNodes { get; private set; }
-
-        public abstract string ToHtml();
-        public abstract string ToBBCode();
-        public abstract string ToText();
-
-        public abstract SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes);
-        internal abstract SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor);
-        protected abstract bool EqualsCore(SyntaxTreeNode b);
-
-        //equality members
-        public bool Equals(SyntaxTreeNode other)
-        {
-            return this == other;
-        }
-        public override bool Equals(object obj)
-        {
-            return Equals(obj as SyntaxTreeNode);
-        }
         public override int GetHashCode()
         {
             return base.GetHashCode(); //TODO
@@ -64,6 +79,7 @@ namespace CodeKicker.BBCode.SyntaxTree
 
             return a.EqualsCore(b);
         }
+
         public static bool operator !=(SyntaxTreeNode a, SyntaxTreeNode b)
         {
             return !(a == b);

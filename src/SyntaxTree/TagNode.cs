@@ -7,10 +7,15 @@ namespace CodeKicker.BBCode.SyntaxTree
 {
     public sealed class TagNode : SyntaxTreeNode
     {
+        public BBTag Tag { get; private set; }
+
+        public IDictionary<BBAttribute, string> AttributeValues { get; private set; }
+
+
+
         public TagNode(BBTag tag)
-            : this(tag, null)
-        {
-        }
+            : this(tag, null) { }
+
         public TagNode(BBTag tag, IEnumerable<SyntaxTreeNode> subNodes)
             : base(subNodes)
         {
@@ -19,14 +24,14 @@ namespace CodeKicker.BBCode.SyntaxTree
             AttributeValues = new Dictionary<BBAttribute, string>();
         }
 
-        public BBTag Tag { get; private set; }
-        public IDictionary<BBAttribute, string> AttributeValues { get; private set; }
+
 
         public override string ToHtml()
         {
             var content = GetContent();
             return ReplaceAttributeValues(Tag.OpenTagTemplate, content) + (Tag.AutoRenderContent ? content : null) + ReplaceAttributeValues(Tag.CloseTagTemplate, content);
         }
+
         public override string ToBBCode()
         {
             var content = string.Concat(SubNodes.Select(s => s.ToBBCode()).ToArray());
@@ -45,17 +50,46 @@ namespace CodeKicker.BBCode.SyntaxTree
             }
             return "[" + Tag.Name + attrs + "]" + content + "[/" + Tag.Name + "]";
         }
+
         public override string ToText()
         {
             return string.Concat(SubNodes.Select(s => s.ToText()).ToArray());
         }
 
-        string GetContent()
+        public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
+        {
+            if (subNodes == null) throw new ArgumentNullException("subNodes");
+            return new TagNode(Tag, subNodes)
+            {
+                AttributeValues = new Dictionary<BBAttribute, string>(AttributeValues),
+            };
+        }
+
+
+        internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
+        {
+            if (visitor == null) throw new ArgumentNullException("visitor");
+            return visitor.Visit(this);
+        }
+
+
+        protected override bool EqualsCore(SyntaxTreeNode b)
+        {
+            var casted = (TagNode)b;
+            return
+                Tag == casted.Tag &&
+                AttributeValues.All(attr => casted.AttributeValues[attr.Key] == attr.Value) &&
+                casted.AttributeValues.All(attr => AttributeValues[attr.Key] == attr.Value);
+        }
+
+
+        private string GetContent()
         {
             var content = string.Concat(SubNodes.Select(s => s.ToHtml()).ToArray());
             return Tag.ContentTransformer == null ? content : Tag.ContentTransformer(content);
         }
-        string ReplaceAttributeValues(string template, string content)
+
+        private string ReplaceAttributeValues(string template, string content)
         {
             var attributesWithValues = (from attr in Tag.Attributes
                                         group attr by attr.ID into gAttrByID
@@ -97,7 +131,7 @@ namespace CodeKicker.BBCode.SyntaxTree
             return output;
         }
 
-        static string ReplaceAttribute(string output, BBAttribute attribute, string rawValue, string placeholderStr, Dictionary<string, string> attrValuesByID)
+        private static string ReplaceAttribute(string output, BBAttribute attribute, string rawValue, string placeholderStr, Dictionary<string, string> attrValuesByID)
         {
             string effectiveValue;
             if (attribute.ContentTransformer == null)
@@ -120,38 +154,23 @@ namespace CodeKicker.BBCode.SyntaxTree
             return output;
         }
 
-        string TryGetValue(BBAttribute attr)
+        private string TryGetValue(BBAttribute attr)
         {
             string val;
             AttributeValues.TryGetValue(attr, out val);
             return val;
         }
 
-        public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
-        {
-            if (subNodes == null) throw new ArgumentNullException("subNodes");
-            return new TagNode(Tag, subNodes)
-                {
-                    AttributeValues = new Dictionary<BBAttribute, string>(AttributeValues),
-                };
-        }
-        internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
-        {
-            if (visitor == null) throw new ArgumentNullException("visitor");
-            return visitor.Visit(this);
-        }
-
-        protected override bool EqualsCore(SyntaxTreeNode b)
-        {
-            var casted = (TagNode)b;
-            return
-                Tag == casted.Tag &&
-                AttributeValues.All(attr => casted.AttributeValues[attr.Key] == attr.Value) &&
-                casted.AttributeValues.All(attr => AttributeValues[attr.Key] == attr.Value);
-        }
-
         class AttributeRenderingContextImpl : IAttributeRenderingContext
         {
+            public BBAttribute Attribute { get; private set; }
+
+            public string AttributeValue { get; private set; }
+
+            public IDictionary<string, string> GetAttributeValueByIDData { get; private set; }
+
+
+
             public AttributeRenderingContextImpl(BBAttribute attribute, string attributeValue, IDictionary<string, string> getAttributeValueByIdData)
             {
                 Attribute = attribute;
@@ -159,9 +178,7 @@ namespace CodeKicker.BBCode.SyntaxTree
                 GetAttributeValueByIDData = getAttributeValueByIdData;
             }
 
-            public BBAttribute Attribute { get; private set; }
-            public string AttributeValue { get; private set; }
-            public IDictionary<string, string> GetAttributeValueByIDData { get; private set; }
+
 
             public string GetAttributeValueByID(string id)
             {

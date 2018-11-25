@@ -8,7 +8,19 @@ namespace CodeKicker.BBCode
 {
     public static class BBCode
     {
-        static readonly BBCodeParser defaultParser = GetParser();
+        private static readonly BBCodeParser _defaultParser;
+
+        public static readonly string InvalidBBCodeTextChars;
+
+
+
+        static BBCode()
+        {
+            InvalidBBCodeTextChars = @"[]\";
+            _defaultParser = GetParser();
+        }
+
+
 
         /// <summary>
         /// Transforms the given BBCode into safe HTML with the default configuration from http://codekicker.de
@@ -20,28 +32,8 @@ namespace CodeKicker.BBCode
         public static string ToHtml(string bbCode)
         {
             if (bbCode == null) throw new ArgumentNullException("bbCode");
-            return defaultParser.ToHtml(bbCode);
+            return _defaultParser.ToHtml(bbCode);
         }
-
-        static BBCodeParser GetParser()
-        {
-            return new BBCodeParser(ErrorMode.ErrorFree, null, new[]
-                {
-                    new BBTag("b", "<b>", "</b>"), 
-                    new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"), 
-                    new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"), 
-                    new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"){ StopProcessing = true, SuppressFirstNewlineAfter = true }, 
-                    new BBTag("img", "<img src=\"${content}\" />", "", false, true), 
-                    new BBTag("quote", "<blockquote>", "</blockquote>"){ SuppressFirstNewlineAfter = true },
-                    // Or if you want attribution on your quotes, you might try:
-                    // new BBTag("quote", "<blockquote><span class=\"attribution\">${name}</span>", "</blockquote>"){ GreedyAttributeProcessing = true },
-                    new BBTag("list", "<ul>", "</ul>"){ SuppressFirstNewlineAfter = true }, 
-                    new BBTag("*", "<li>", "</li>", true, false), 
-                    new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")), 
-                });
-        }
-
-        public static readonly string InvalidBBCodeTextChars = @"[]\";
 
         /// <summary>
         /// Encodes an arbitrary string to be valid BBCode. Example: "[b]" => "\[b\]". The resulting string is safe against
@@ -170,10 +162,36 @@ namespace CodeKicker.BBCode
                 return obj == null ? 0 : obj.GetHashCode();
             }
         }
+
+        private static BBCodeParser GetParser()
+        {
+            return new BBCodeParser(ErrorMode.ErrorFree, null, new[]
+                {
+                    new BBTag("b", "<b>", "</b>"),
+                    new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"),
+                    new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"),
+                    new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"){ StopProcessing = true, SuppressFirstNewlineAfter = true },
+                    new BBTag("img", "<img src=\"${content}\" />", "", false, true),
+                    new BBTag("quote", "<blockquote>", "</blockquote>"){ SuppressFirstNewlineAfter = true },
+                    // Or if you want attribution on your quotes, you might try:
+                    // new BBTag("quote", "<blockquote><span class=\"attribution\">${name}</span>", "</blockquote>"){ GreedyAttributeProcessing = true },
+                    new BBTag("list", "<ul>", "</ul>"){ SuppressFirstNewlineAfter = true },
+                    new BBTag("*", "<li>", "</li>", true, false),
+                    new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")),
+                });
+        }
     }
 
     public class TextSpanReplaceInfo
     {
+        public int Index { get; private set; }
+
+        public int Length { get; private set; }
+
+        public SyntaxTreeNode Replacement { get; private set; }
+
+
+
         public TextSpanReplaceInfo(int index, int length, SyntaxTreeNode replacement)
         {
             if (index < 0) throw new ArgumentOutOfRangeException("index");
@@ -183,9 +201,5 @@ namespace CodeKicker.BBCode
             Length = length;
             Replacement = replacement;
         }
-
-        public int Index { get; private set; }
-        public int Length { get; private set; }
-        public SyntaxTreeNode Replacement { get; private set; }
     }
 }

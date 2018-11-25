@@ -9,6 +9,8 @@ namespace CodeKicker.BBCode.SyntaxTree
             if (node == null) return null;
             return node.AcceptVisitor(this);
         }
+
+
         protected internal virtual SyntaxTreeNode Visit(SequenceNode node)
         {
             if (node == null) return null;
@@ -20,6 +22,7 @@ namespace CodeKicker.BBCode.SyntaxTree
             else
                 return node.SetSubNodes(modifiedSubNodes); //subnodes were modified
         }
+
         protected internal virtual SyntaxTreeNode Visit(TagNode node)
         {
             if (node == null) return null;
@@ -31,12 +34,14 @@ namespace CodeKicker.BBCode.SyntaxTree
             else
                 return node.SetSubNodes(modifiedSubNodes); //subnodes were modified
         }
+
         protected internal virtual SyntaxTreeNode Visit(TextNode node)
         {
             return node;
         }
 
-        SyntaxTreeNodeCollection GetModifiedSubNodes(SyntaxTreeNode node)
+
+        private SyntaxTreeNodeCollection GetModifiedSubNodes(SyntaxTreeNode node)
         {
             SyntaxTreeNodeCollection modifiedSubNodes = null; //lazy
 

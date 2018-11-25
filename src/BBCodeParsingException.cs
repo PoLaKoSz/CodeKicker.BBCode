@@ -8,6 +8,7 @@ namespace CodeKicker.BBCode
         public BBCodeParsingException()
         {
         }
+
         public BBCodeParsingException(string message)
             : base(message)
         {

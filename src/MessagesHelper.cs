@@ -4,20 +4,25 @@ namespace CodeKicker.BBCode
 {
     static class MessagesHelper
     {
-        static readonly ResourceManager resMgr;
+        private static readonly ResourceManager _resMgr;
+
+
 
         static MessagesHelper()
         {
-            resMgr = new ResourceManager(typeof(Messages));
+            _resMgr = new ResourceManager(typeof(Messages));
         }
+
+
 
         public static string GetString(string key)
         {
-            return resMgr.GetString(key);
+            return _resMgr.GetString(key);
         }
+
         public static string GetString(string key, params string[] parameters)
         {
-            return string.Format(resMgr.GetString(key), parameters);
+            return string.Format(_resMgr.GetString(key), parameters);
         }
     }
 

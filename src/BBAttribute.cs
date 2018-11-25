@@ -4,14 +4,22 @@ namespace CodeKicker.BBCode
 {
     public class BBAttribute
     {
+        public string ID { get; private set; } //ID is used to reference the attribute value
+
+        public string Name { get; private set; } //Name is used during parsing
+
+        public Func<IAttributeRenderingContext, string> ContentTransformer { get; private set; } //allows for custom modification of the attribute value before rendering takes place
+
+        public HtmlEncodingMode HtmlEncodingMode { get; set; }
+
+
+
         public BBAttribute(string id, string name)
-            : this(id, name, null, HtmlEncodingMode.HtmlAttributeEncode)
-        {
-        }
+            : this(id, name, null, HtmlEncodingMode.HtmlAttributeEncode) { }
+
         public BBAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer)
-            : this(id, name, contentTransformer, HtmlEncodingMode.HtmlAttributeEncode)
-        {
-        }
+            : this(id, name, contentTransformer, HtmlEncodingMode.HtmlAttributeEncode) { }
+
         public BBAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer, HtmlEncodingMode htmlEncodingMode)
         {
             if (id == null) throw new ArgumentNullException("id");
@@ -24,10 +32,7 @@ namespace CodeKicker.BBCode
             HtmlEncodingMode = htmlEncodingMode;
         }
 
-        public string ID { get; private set; } //ID is used to reference the attribute value
-        public string Name { get; private set; } //Name is used during parsing
-        public Func<IAttributeRenderingContext, string> ContentTransformer { get; private set; } //allows for custom modification of the attribute value before rendering takes place
-        public HtmlEncodingMode HtmlEncodingMode { get; set; }
+
 
         public static Func<IAttributeRenderingContext, string> AdaptLegacyContentTransformer(Func<string, string> contentTransformer)
         {

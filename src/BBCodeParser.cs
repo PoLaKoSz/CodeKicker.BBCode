@@ -13,10 +13,16 @@ namespace CodeKicker.BBCode
     /// </summary>
     public class BBCodeParser
     {
+        public IList<BBTag> Tags { get; private set; }
+
+        public string TextNodeHtmlTemplate { get; private set; }
+
+        public ErrorMode ErrorMode { get; private set; }
+
+
+
         public BBCodeParser(IList<BBTag> tags)
-            : this(ErrorMode.ErrorFree, null, tags)
-        {
-        }
+            : this(ErrorMode.ErrorFree, null, tags) { }
 
         public BBCodeParser(ErrorMode errorMode, string textNodeHtmlTemplate, IList<BBTag> tags)
         {
@@ -28,15 +34,14 @@ namespace CodeKicker.BBCode
             Tags = tags;
         }
 
-        public IList<BBTag> Tags { get; private set; }
-        public string TextNodeHtmlTemplate { get; private set; }
-        public ErrorMode ErrorMode { get; private set; }
+
 
         public virtual string ToHtml(string bbCode)
         {
             if (bbCode == null) throw new ArgumentNullException("bbCode");
             return ParseSyntaxTree(bbCode).ToHtml();
         }
+
         public virtual SequenceNode ParseSyntaxTree(string bbCode)
         {
             if (bbCode == null) throw new ArgumentNullException("bbCode");
@@ -81,7 +86,8 @@ namespace CodeKicker.BBCode
             return rootNode;
         }
 
-        bool MatchTagEnd(string bbCode, ref int pos, Stack<SyntaxTreeNode> stack)
+
+        private bool MatchTagEnd(string bbCode, ref int pos, Stack<SyntaxTreeNode> stack)
         {
             int end = pos;
 
@@ -116,7 +122,8 @@ namespace CodeKicker.BBCode
 
             return false;
         }
-        bool MatchStartTag(string bbCode, ref int pos, Stack<SyntaxTreeNode> stack)
+
+        private bool MatchStartTag(string bbCode, ref int pos, Stack<SyntaxTreeNode> stack)
         {
             // Before we do *anything* - if the topmost node on the stack is marked as StopProcessing then
             // don't match anything
@@ -176,7 +183,8 @@ namespace CodeKicker.BBCode
 
             return false;
         }
-        bool MatchTextNode(string bbCode, ref int pos, Stack<SyntaxTreeNode> stack)
+
+        private bool MatchTextNode(string bbCode, ref int pos, Stack<SyntaxTreeNode> stack)
         {
             int end = pos;
 
@@ -190,7 +198,8 @@ namespace CodeKicker.BBCode
 
             return false;
         }
-        void AppendText(string textToAppend, Stack<SyntaxTreeNode> stack)
+
+        private void AppendText(string textToAppend, Stack<SyntaxTreeNode> stack)
         {
             var currentNode = stack.Peek();
             var lastChild = currentNode.SubNodes.Count == 0 ? null : currentNode.SubNodes[currentNode.SubNodes.Count - 1] as TextNode;
@@ -207,7 +216,7 @@ namespace CodeKicker.BBCode
                 currentNode.SubNodes.Add(newChild);
         }
 
-        TagNode ParseTagStart(string input, ref int pos)
+        private TagNode ParseTagStart(string input, ref int pos)
         {
             var end = pos;
 
@@ -252,7 +261,8 @@ namespace CodeKicker.BBCode
             pos = end;
             return result;
         }
-        string ParseTagEnd(string input, ref int pos)
+
+        private string ParseTagEnd(string input, ref int pos)
         {
             var end = pos;
 
@@ -280,7 +290,8 @@ namespace CodeKicker.BBCode
             pos = end;
             return tagName;
         }
-        string ParseText(string input, ref int pos)
+
+        private string ParseText(string input, ref int pos)
         {
             int end = pos;
             bool escapeFound = false;
@@ -354,7 +365,7 @@ namespace CodeKicker.BBCode
             return result == "" ? null : result;
         }
 
-        static string ParseName(string input, ref int pos)
+        private static string ParseName(string input, ref int pos)
         {
             int end = pos;
             for (; end < input.Length && (char.ToLower(input[end]) >= 'a' && char.ToLower(input[end]) <= 'z' || (input[end]) >= '0' && (input[end]) <= '9' || input[end] == '*'); end++) ;
@@ -364,7 +375,8 @@ namespace CodeKicker.BBCode
             pos = end;
             return result;
         }
-        static string ParseAttributeValue(string input, ref int pos, bool greedyProcessing = false)
+
+        private static string ParseAttributeValue(string input, ref int pos, bool greedyProcessing = false)
         {
             var end = pos;
 
@@ -389,7 +401,8 @@ namespace CodeKicker.BBCode
             pos = endIndex;
             return result;
         }
-        static bool ParseWhitespace(string input, ref int pos)
+
+        private static bool ParseWhitespace(string input, ref int pos)
         {
             int end = pos;
             while (end < input.Length && char.IsWhiteSpace(input[end]))
@@ -399,7 +412,8 @@ namespace CodeKicker.BBCode
             pos = end;
             return found;
         }
-        static bool ParseLimitedWhitespace(string input, ref int pos, int maxNewlinesToConsume)
+
+        private static bool ParseLimitedWhitespace(string input, ref int pos, int maxNewlinesToConsume)
         {
             int end = pos;
             int consumedNewlines = 0;
@@ -439,14 +453,15 @@ namespace CodeKicker.BBCode
             pos = end;
             return found;
         }
-        static bool ParseChar(string input, ref int pos, char c)
+
+        private static bool ParseChar(string input, ref int pos, char c)
         {
             if (pos >= input.Length || input[pos] != c) return false;
             pos++;
             return true;
         }
 
-        bool ErrorOrReturn(string msgKey, params string[] parameters)
+        private bool ErrorOrReturn(string msgKey, params string[] parameters)
         {
             if (ErrorMode == ErrorMode.ErrorFree) return true;
             else throw new BBCodeParsingException(string.IsNullOrEmpty(msgKey) ? "" : MessagesHelper.GetString(msgKey, parameters));
