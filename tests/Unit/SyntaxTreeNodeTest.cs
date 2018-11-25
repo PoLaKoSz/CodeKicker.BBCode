@@ -14,6 +14,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             bbCode2 = tree2.ToBBCode();
             Assert.AreEqual(tree1 == tree2, bbCode1 == bbCode2);
         }
+
         [TestMethod]
         public void UnequalTexthasUnequalTrees(out string text1, out string text2)
         {
