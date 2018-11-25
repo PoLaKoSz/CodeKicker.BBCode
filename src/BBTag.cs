@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace CodeKicker.BBCode
 {
@@ -24,7 +22,7 @@ namespace CodeKicker.BBCode
             EnableIterationElementBehavior = enableIterationElementBehavior;
             Attributes = attributes ?? new BBAttribute[0];
         }
-        
+
         public BBTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, BBTagClosingStyle tagClosingClosingStyle, Func<string, string> contentTransformer, params BBAttribute[] attributes)
             : this(name, openTagTemplate, closeTagTemplate, autoRenderContent, tagClosingClosingStyle, contentTransformer, false, attributes)
         {

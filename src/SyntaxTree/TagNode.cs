@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Data;
 using System.Web;
 
 namespace CodeKicker.BBCode.SyntaxTree
@@ -87,7 +86,7 @@ namespace CodeKicker.BBCode.SyntaxTree
             //replace empty attributes
             var attributeIDsWithValues = new HashSet<string>(attributesWithValues.Where(x => x.attrAndVal != null).Select(x => x.attrID));
             var emptyAttributes = Tag.Attributes.Where(attr => !attributeIDsWithValues.Contains(attr.ID)).ToList();
-            
+
             foreach (var attr in emptyAttributes)
             {
                 var placeholderStr = "${" + attr.ID + "}";

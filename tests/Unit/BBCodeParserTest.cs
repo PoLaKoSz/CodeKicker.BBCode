@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using CodeKicker.BBCode;
+﻿using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
