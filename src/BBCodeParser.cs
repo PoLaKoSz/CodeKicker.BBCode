@@ -22,7 +22,13 @@ namespace CodeKicker.BBCode
 
 
         public BBCodeParser(IList<BBTag> tags)
-            : this(ErrorMode.ErrorFree, null, tags) { }
+            : this(default(ErrorMode), null, tags) { }
+
+        public BBCodeParser(ErrorMode errorMode, IList<BBTag> tags)
+            : this(errorMode, null, tags) { }
+
+        public BBCodeParser(string textNodeHtmlTemplate, IList<BBTag> tags)
+            : this(default(ErrorMode), textNodeHtmlTemplate, tags) { }
 
         public BBCodeParser(ErrorMode errorMode, string textNodeHtmlTemplate, IList<BBTag> tags)
         {
