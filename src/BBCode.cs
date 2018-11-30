@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
 
@@ -140,7 +139,11 @@ namespace CodeKicker.BBCode
             }
             else
             {
-                if (node is TagNode && (tagFilter != null && !tagFilter((TagNode)node))) return; //skip filtered tags
+                if (node is TagNode
+                    && (tagFilter != null && !tagFilter((TagNode)node)))
+                {
+                    return; //skip filtered tags
+                }
 
                 foreach (var subNode in node.SubNodes)
                     VisitTextNodes(subNode, visitText, tagFilter);
@@ -166,19 +169,19 @@ namespace CodeKicker.BBCode
         private static BBCodeParser GetParser()
         {
             return new BBCodeParser(ErrorMode.ErrorFree, null, new[]
-                {
-                    new BBTag("b", "<b>", "</b>"),
-                    new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"),
-                    new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"),
-                    new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"){ StopProcessing = true, SuppressFirstNewlineAfter = true },
-                    new BBTag("img", "<img src=\"${content}\" />", "", false, true),
-                    new BBTag("quote", "<blockquote>", "</blockquote>"){ SuppressFirstNewlineAfter = true },
-                    // Or if you want attribution on your quotes, you might try:
-                    // new BBTag("quote", "<blockquote><span class=\"attribution\">${name}</span>", "</blockquote>"){ GreedyAttributeProcessing = true },
-                    new BBTag("list", "<ul>", "</ul>"){ SuppressFirstNewlineAfter = true },
-                    new BBTag("*", "<li>", "</li>", true, false),
-                    new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")),
-                });
+            {
+                new BBTag("b", "<b>", "</b>"),
+                new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"),
+                new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"),
+                new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"){ StopProcessing = true, SuppressFirstNewlineAfter = true },
+                new BBTag("img", "<img src=\"${content}\" />", "", false, true),
+                new BBTag("quote", "<blockquote>", "</blockquote>"){ SuppressFirstNewlineAfter = true },
+                // Or if you want attribution on your quotes, you might try:
+                // new BBTag("quote", "<blockquote><span class=\"attribution\">${name}</span>", "</blockquote>"){ GreedyAttributeProcessing = true },
+                new BBTag("list", "<ul>", "</ul>"){ SuppressFirstNewlineAfter = true },
+                new BBTag("*", "<li>", "</li>", true, false),
+                new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")),
+            });
         }
     }
 }

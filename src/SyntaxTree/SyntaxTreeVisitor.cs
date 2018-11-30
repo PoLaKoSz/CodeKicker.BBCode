@@ -6,14 +6,17 @@ namespace CodeKicker.BBCode.SyntaxTree
     {
         public SyntaxTreeNode Visit(SyntaxTreeNode node)
         {
-            if (node == null) return null;
+            if (node == null)
+                return null;
+
             return node.AcceptVisitor(this);
         }
 
 
         protected internal virtual SyntaxTreeNode Visit(SequenceNode node)
         {
-            if (node == null) return null;
+            if (node == null)
+                return null;
 
             var modifiedSubNodes = GetModifiedSubNodes(node);
 
@@ -25,7 +28,8 @@ namespace CodeKicker.BBCode.SyntaxTree
 
         protected internal virtual SyntaxTreeNode Visit(TagNode node)
         {
-            if (node == null) return null;
+            if (node == null)
+                return null;
 
             var modifiedSubNodes = GetModifiedSubNodes(node);
 

@@ -75,17 +75,16 @@ namespace CodeKicker.BBCode
                 end++;
             }
 
-            Debug.Assert(end == bbCode.Length); //assert bbCode was matched entirely
-
             while (stack.Count > 1) //close all tags that are still open and can be closed implicitly
             {
                 var node = (TagNode)stack.Pop();
-                if (node.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict) throw new BBCodeParsingException(MessagesHelper.GetString("TagNotClosed", node.Tag.Name));
+
+                if (node.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict)
+                    throw new BBCodeParsingException(MessagesHelper.GetString("TagNotClosed", node.Tag.Name));
             }
 
             if (stack.Count != 1)
             {
-                Debug.Assert(ErrorMode != ErrorMode.ErrorFree);
                 throw new BBCodeParsingException(""); //only the root node may be left
             }
 
@@ -103,7 +102,10 @@ namespace CodeKicker.BBCode
                 while (true)
                 {
                     var openingNode = stack.Peek() as TagNode; //could also be a SequenceNode
-                    if (openingNode == null && ErrorOrReturn("TagNotOpened", tagEnd)) return false;
+
+                    if (openingNode == null && ErrorOrReturn("TagNotOpened", tagEnd))
+                        return false;
+
                     Debug.Assert(openingNode != null); //ErrorOrReturn will either or throw make this stack frame exit
 
                     if (!openingNode.Tag.Name.Equals(tagEnd, StringComparison.OrdinalIgnoreCase))
@@ -140,33 +142,33 @@ namespace CodeKicker.BBCode
             }
 
             int end = pos;
-            var tag = ParseTagStart(bbCode, ref end);
-            if (tag != null)
+            TagNode tagNode = ParseTagStart(bbCode, ref end);
+
+            if (tagNode != null)
             {
-                if (tag.Tag.EnableIterationElementBehavior)
+                if (tagNode.Tag.EnableIterationElementBehavior)
                 {
                     //this element behaves like a list item: it allows tags as content, it auto-closes and it does not nest.
                     //the last property is ensured by closing all currently open tags up to the opening list element
 
-                    var isThisTagAlreadyOnStack = stack.OfType<TagNode>().Any(n => n.Tag == tag.Tag);
+                    var isThisTagAlreadyOnStack = stack.OfType<TagNode>().Any(n => n.Tag == tagNode.Tag);
                     //if this condition is false, no nesting would occur anyway
 
                     if (isThisTagAlreadyOnStack)
                     {
                         var openingNode = stack.Peek() as TagNode; //could also be a SequenceNode
-                        Debug.Assert(openingNode != null); //isThisTagAlreadyOnStack would have been false
 
-                        if (openingNode.Tag != tag.Tag && ErrorMode == ErrorMode.Strict && ErrorOrReturn("TagNotMatching", tag.Tag.Name, openingNode.Tag.Name)) return false;
+                        if (openingNode.Tag != tagNode.Tag && ErrorMode == ErrorMode.Strict && ErrorOrReturn("TagNotMatching", tagNode.Tag.Name, openingNode.Tag.Name)) return false;
 
                         while (true)
                         {
                             var poppedOpeningNode = (TagNode)stack.Pop();
 
-                            if (poppedOpeningNode.Tag != tag.Tag)
+                            if (poppedOpeningNode.Tag != tagNode.Tag)
                             {
                                 //a nesting imbalance was detected
 
-                                if (openingNode.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict && ErrorOrReturn("TagNotMatching", tag.Tag.Name, openingNode.Tag.Name))
+                                if (openingNode.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict && ErrorOrReturn("TagNotMatching", tagNode.Tag.Name, openingNode.Tag.Name))
                                     return false;
                                 //close the (wrongly) open tag. we have already popped so do nothing.
                             }
@@ -180,10 +182,13 @@ namespace CodeKicker.BBCode
                     }
                 }
 
-                stack.Peek().SubNodes.Add(tag);
-                if (tag.Tag.TagClosingStyle != BBTagClosingStyle.LeafElementWithoutContent)
-                    stack.Push(tag); //leaf elements have no content - they are closed immediately
+                stack.Peek().SubNodes.Add(tagNode);
+
+                if (tagNode.Tag.TagClosingStyle != BBTagClosingStyle.LeafElementWithoutContent)
+                    stack.Push(tagNode); //leaf elements have no content - they are closed immediately
+
                 pos = end;
+                
                 return true;
             }
 
@@ -226,13 +231,18 @@ namespace CodeKicker.BBCode
         {
             var end = pos;
 
-            if (!ParseChar(input, ref end, '[')) return null;
+            if (!ParseChar(input, ref end, '['))
+                return null;
 
             var tagName = ParseName(input, ref end);
-            if (tagName == null) return null;
+
+            if (tagName == null)
+                return null;
 
             var tag = Tags.SingleOrDefault(t => t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
-            if (tag == null && ErrorOrReturn("UnknownTag", tagName)) return null;
+
+            if (tag == null && ErrorOrReturn("UnknownTag", tagName))
+                return null;
 
             var result = new TagNode(tag);
 
@@ -240,27 +250,43 @@ namespace CodeKicker.BBCode
             if (defaultAttrValue != null)
             {
                 var attr = tag.FindAttribute("");
-                if (attr == null && ErrorOrReturn("UnknownAttribute", tag.Name, "\"Default Attribute\"")) return null;
+
+                if (attr == null && ErrorOrReturn("UnknownAttribute", tag.Name, "\"Default Attribute\""))
+                    return null;
+
                 result.AttributeValues.Add(attr, defaultAttrValue);
             }
 
             while (true)
             {
                 ParseWhitespace(input, ref end);
+
                 var attrName = ParseName(input, ref end);
-                if (attrName == null) break;
+
+                if (attrName == null)
+                    break;
 
                 var attrVal = ParseAttributeValue(input, ref end);
-                if (attrVal == null && ErrorOrReturn("")) return null;
 
-                if (tag.Attributes == null && ErrorOrReturn("UnknownTag", tag.Name)) return null;
+                if (attrVal == null && ErrorOrReturn(""))
+                    return null;
+
+                if (tag.Attributes == null && ErrorOrReturn("UnknownTag", tag.Name))
+                    return null;
+
                 var attr = tag.FindAttribute(attrName);
-                if (attr == null && ErrorOrReturn("UnknownTag", tag.Name, attrName)) return null;
 
-                if (result.AttributeValues.ContainsKey(attr) && ErrorOrReturn("DuplicateAttribute", tagName, attrName)) return null;
+                if (attr == null && ErrorOrReturn("UnknownTag", tag.Name, attrName))
+                    return null;
+
+                if (result.AttributeValues.ContainsKey(attr) && ErrorOrReturn("DuplicateAttribute", tagName, attrName))
+                    return null;
+
                 result.AttributeValues.Add(attr, attrVal);
             }
-            if (!ParseChar(input, ref end, ']') && ErrorOrReturn("TagNotClosed", tagName)) return null;
+
+            if (!ParseChar(input, ref end, ']') && ErrorOrReturn("TagNotClosed", tagName))
+                return null;
 
             ParseWhitespace(input, ref end);
 

@@ -28,26 +28,32 @@ namespace CodeKicker.BBCode.SyntaxTree
 
         public override string ToHtml()
         {
-            var content = GetContent();
+            string content = GetContent();
+
             return ReplaceAttributeValues(Tag.OpenTagTemplate, content) + (Tag.AutoRenderContent ? content : null) + ReplaceAttributeValues(Tag.CloseTagTemplate, content);
         }
 
         public override string ToBBCode()
         {
-            var content = string.Concat(SubNodes.Select(s => s.ToBBCode()).ToArray());
+            string content = string.Concat(SubNodes.Select(s => s.ToBBCode()).ToArray());
 
-            var attrs = "";
-            var defAttr = Tag.FindAttribute("");
+            string attrs = "";
+            BBAttribute defAttr = Tag.FindAttribute("");
+
             if (defAttr != null)
             {
                 if (AttributeValues.ContainsKey(defAttr))
                     attrs += "=" + AttributeValues[defAttr];
             }
+
             foreach (var attrKvp in AttributeValues)
             {
-                if (attrKvp.Key.Name == "") continue;
+                if (attrKvp.Key.Name == "")
+                    continue;
+
                 attrs += " " + attrKvp.Key.Name + "=" + attrKvp.Value;
             }
+
             return "[" + Tag.Name + attrs + "]" + content + "[/" + Tag.Name + "]";
         }
 
@@ -86,25 +92,29 @@ namespace CodeKicker.BBCode.SyntaxTree
         private string GetContent()
         {
             var content = string.Concat(SubNodes.Select(s => s.ToHtml()).ToArray());
+
             return Tag.ContentTransformer == null ? content : Tag.ContentTransformer(content);
         }
 
         private string ReplaceAttributeValues(string template, string content)
         {
-            var attributesWithValues = (from attr in Tag.Attributes
-                                        group attr by attr.ID into gAttrByID
-                                        let val = (from attr in gAttrByID
-                                                   let val = TryGetValue(attr)
-                                                   where val != null
-                                                   select new { attr, val }).FirstOrDefault()
-                                        select new { attrID = gAttrByID.Key, attrAndVal = val }).ToList();
+            var attrList = (from attr in Tag.Attributes
+                            group attr by attr.ID into gAttrByID
+                            let val = (from attr in gAttrByID
+                                       let val = TryGetValue(attr)
+                                       where val != null
+                                       select new { attr, val }).FirstOrDefault()
+                            select new { attrID = gAttrByID.Key, attrAndVal = val }).ToList();
 
-            var attrValuesByID = attributesWithValues.Where(x => x.attrAndVal != null).ToDictionary(x => x.attrID, x => x.attrAndVal.val);
-            if (!attrValuesByID.ContainsKey(BBTag.ContentPlaceholderName))
-                attrValuesByID.Add(BBTag.ContentPlaceholderName, content);
+            var attrDictionary = attrList
+                .Where(x => x.attrAndVal != null)
+                .ToDictionary(x => x.attrID, x => x.attrAndVal.val);
+
+            if (!attrDictionary.ContainsKey(BBTag.ContentPlaceholderName))
+                attrDictionary.Add(BBTag.ContentPlaceholderName, content);
 
             var output = template;
-            foreach (var x in attributesWithValues)
+            foreach (var x in attrList)
             {
                 var placeholderStr = "${" + x.attrID + "}";
 
@@ -113,18 +123,18 @@ namespace CodeKicker.BBCode.SyntaxTree
                     //replace attributes with values
                     var rawValue = x.attrAndVal.val;
                     var attribute = x.attrAndVal.attr;
-                    output = ReplaceAttribute(output, attribute, rawValue, placeholderStr, attrValuesByID);
+                    output = ReplaceAttribute(output, attribute, rawValue, placeholderStr, attrDictionary);
                 }
             }
 
             //replace empty attributes
-            var attributeIDsWithValues = new HashSet<string>(attributesWithValues.Where(x => x.attrAndVal != null).Select(x => x.attrID));
+            var attributeIDsWithValues = new HashSet<string>(attrList.Where(x => x.attrAndVal != null).Select(x => x.attrID));
             var emptyAttributes = Tag.Attributes.Where(attr => !attributeIDsWithValues.Contains(attr.ID)).ToList();
 
             foreach (var attr in emptyAttributes)
             {
                 var placeholderStr = "${" + attr.ID + "}";
-                output = ReplaceAttribute(output, attr, null, placeholderStr, attrValuesByID);
+                output = ReplaceAttribute(output, attr, null, placeholderStr, attrDictionary);
             }
 
             output = output.Replace("${" + BBTag.ContentPlaceholderName + "}", content);
@@ -144,13 +154,16 @@ namespace CodeKicker.BBCode.SyntaxTree
                 effectiveValue = attribute.ContentTransformer(ctx);
             }
 
-            if (effectiveValue == null) effectiveValue = "";
+            if (effectiveValue == null)
+                effectiveValue = "";
 
             var encodedValue =
                 attribute.HtmlEncodingMode == HtmlEncodingMode.HtmlAttributeEncode ? HttpUtility.HtmlAttributeEncode(effectiveValue)
                     : attribute.HtmlEncodingMode == HtmlEncodingMode.HtmlEncode ? HttpUtility.HtmlEncode(effectiveValue)
                           : effectiveValue;
+
             output = output.Replace(placeholderStr, encodedValue);
+
             return output;
         }
 
@@ -183,7 +196,10 @@ namespace CodeKicker.BBCode.SyntaxTree
             public string GetAttributeValueByID(string id)
             {
                 string value;
-                if (!GetAttributeValueByIDData.TryGetValue(id, out value)) return null;
+
+                if (!GetAttributeValueByIDData.TryGetValue(id, out value))
+                    return null;
+
                 return value;
             }
         }

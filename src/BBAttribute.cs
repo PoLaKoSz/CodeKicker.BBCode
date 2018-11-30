@@ -36,7 +36,7 @@ namespace CodeKicker.BBCode
 
         public static Func<IAttributeRenderingContext, string> AdaptLegacyContentTransformer(Func<string, string> contentTransformer)
         {
-            return contentTransformer == null ? (Func<IAttributeRenderingContext, string>)null : ctx => contentTransformer(ctx.AttributeValue);
+            return contentTransformer == null ? (Func<IAttributeRenderingContext, string>) null : ctx => contentTransformer(ctx.AttributeValue);
         }
     }
 }
