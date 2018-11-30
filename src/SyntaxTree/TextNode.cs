@@ -19,8 +19,7 @@ namespace CodeKicker.BBCode.SyntaxTree
         public TextNode(string text, string htmlTemplate)
             : base(null)
         {
-            if (text == null) throw new ArgumentNullException("text");
-            Text = text;
+            Text = text ?? throw new ArgumentNullException(nameof(text));
             HtmlTemplate = htmlTemplate;
         }
 
@@ -56,14 +55,20 @@ namespace CodeKicker.BBCode.SyntaxTree
 
         public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
         {
-            if (subNodes == null) throw new ArgumentNullException("subNodes");
-            if (subNodes.Any()) throw new ArgumentException("subNodes cannot contain any nodes for a TextNode");
+            if (subNodes == null)
+                throw new ArgumentNullException(nameof(subNodes));
+
+            if (subNodes.Any())
+                throw new ArgumentException($"{nameof(subNodes)} cannot contain any nodes for a TextNode.");
+
             return this;
         }
 
         internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
         {
-            if (visitor == null) throw new ArgumentNullException("visitor");
+            if (visitor == null)
+                throw new ArgumentNullException(nameof(visitor));
+
             return visitor.Visit(this);
         }
 

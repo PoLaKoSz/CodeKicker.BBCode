@@ -11,13 +11,15 @@ namespace CodeKicker.BBCode.SyntaxTree
         public SequenceNode(SyntaxTreeNodeCollection subNodes)
             : base(subNodes)
         {
-            if (subNodes == null) throw new ArgumentNullException("subNodes");
+            if (subNodes == null)
+                throw new ArgumentNullException(nameof(subNodes));
         }
 
         public SequenceNode(IEnumerable<SyntaxTreeNode> subNodes)
             : base(subNodes)
         {
-            if (subNodes == null) throw new ArgumentNullException("subNodes");
+            if (subNodes == null)
+                throw new ArgumentNullException(nameof(subNodes));
         }
 
 
@@ -39,14 +41,20 @@ namespace CodeKicker.BBCode.SyntaxTree
 
         public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
         {
-            if (subNodes == null) throw new ArgumentNullException("subNodes");
+            if (subNodes == null)
+                throw new ArgumentNullException(nameof(subNodes));
+
             return new SequenceNode(subNodes);
         }
 
 
         internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
         {
-            if (visitor == null) throw new ArgumentNullException("visitor");
+            if (visitor == null)
+            {
+                throw new ArgumentNullException(nameof(visitor));
+            }
+
             return visitor.Visit(this);
         }
 

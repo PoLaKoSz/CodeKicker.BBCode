@@ -30,7 +30,9 @@ namespace CodeKicker.BBCode
         /// <returns></returns>
         public static string ToHtml(string bbCode)
         {
-            if (bbCode == null) throw new ArgumentNullException("bbCode");
+            if (bbCode == null)
+                throw new ArgumentNullException(nameof(bbCode));
+
             return _defaultParser.ToHtml(bbCode);
         }
 
@@ -41,7 +43,8 @@ namespace CodeKicker.BBCode
         /// </summary>
         public static string EscapeText(string text)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
 
             int escapeCount = 0;
             for (int i = 0; i < text.Length; i++)
@@ -50,14 +53,17 @@ namespace CodeKicker.BBCode
                     escapeCount++;
             }
 
-            if (escapeCount == 0) return text;
+            if (escapeCount == 0)
+                return text;
 
             var output = new char[text.Length + escapeCount];
             int outputWritePos = 0;
+
             for (int i = 0; i < text.Length; i++)
             {
                 if (text[i] == '[' || text[i] == ']' || text[i] == '\\')
                     output[outputWritePos++] = '\\';
+
                 output[outputWritePos++] = text[i];
             }
 
@@ -71,21 +77,26 @@ namespace CodeKicker.BBCode
         /// </summary>
         public static string UnescapeText(string text)
         {
-            if (text == null) throw new ArgumentNullException("text");
+            if (text == null)
+                throw new ArgumentNullException(nameof(text));
 
             return text.Replace("\\[", "[").Replace("\\]", "]").Replace("\\\\", "\\");
         }
 
         public static SyntaxTreeNode ReplaceTextSpans(SyntaxTreeNode node, Func<string, IList<TextSpanReplaceInfo>> getTextSpansToReplace, Func<TagNode, bool> tagFilter)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (getTextSpansToReplace == null) throw new ArgumentNullException("getTextSpansToReplace");
+            if (node == null)
+                throw new ArgumentNullException(nameof(node));
+
+            if (getTextSpansToReplace == null)
+                throw new ArgumentNullException(nameof(getTextSpansToReplace));
 
             if (node is TextNode)
             {
-                var text = ((TextNode)node).Text;
+                var nodeText = ((TextNode)node).Text;
 
-                var replacements = getTextSpansToReplace(text);
+                var replacements = getTextSpansToReplace(nodeText);
+
                 if (replacements == null || replacements.Count == 0)
                     return node;
 
@@ -94,11 +105,14 @@ namespace CodeKicker.BBCode
 
                 foreach (var r in replacements)
                 {
-                    if (r.Index < lastPos) throw new ArgumentException("the replacement text spans must be ordered by index and non-overlapping");
-                    if (r.Index > text.Length - r.Length) throw new ArgumentException("every replacement text span must reference a range within the text node");
+                    if (r.Index < lastPos)
+                        throw new ArgumentException("the replacement text spans must be ordered by index and non-overlapping");
+
+                    if (r.Index > nodeText.Length - r.Length)
+                        throw new ArgumentException("every replacement text span must reference a range within the text node");
 
                     if (r.Index != lastPos)
-                        replacementNodes.Add(new TextNode(text.Substring(lastPos, r.Index - lastPos)));
+                        replacementNodes.Add(new TextNode(nodeText.Substring(lastPos, r.Index - lastPos)));
 
                     if (r.Replacement != null)
                         replacementNodes.Add(r.Replacement);
@@ -106,8 +120,8 @@ namespace CodeKicker.BBCode
                     lastPos = r.Index + r.Length;
                 }
 
-                if (lastPos != text.Length)
-                    replacementNodes.Add(new TextNode(text.Substring(lastPos)));
+                if (lastPos != nodeText.Length)
+                    replacementNodes.Add(new TextNode(nodeText.Substring(lastPos)));
 
                 return new SequenceNode(replacementNodes);
             }
@@ -118,7 +132,7 @@ namespace CodeKicker.BBCode
                     if (n is TagNode && (tagFilter != null && !tagFilter((TagNode)n))) return n; //skip filtered tags
 
                     var repl = ReplaceTextSpans(n, getTextSpansToReplace, tagFilter);
-                    Debug.Assert(repl != null);
+
                     return repl;
                 }).ToList();
 
@@ -130,8 +144,8 @@ namespace CodeKicker.BBCode
 
         public static void VisitTextNodes(SyntaxTreeNode node, Action<string> visitText, Func<TagNode, bool> tagFilter)
         {
-            if (node == null) throw new ArgumentNullException("node");
-            if (visitText == null) throw new ArgumentNullException("visitText");
+            if (node == null) throw new ArgumentNullException(nameof(node));
+            if (visitText == null) throw new ArgumentNullException(nameof(visitText));
 
             if (node is TextNode)
             {

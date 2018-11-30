@@ -22,12 +22,11 @@ namespace CodeKicker.BBCode
 
         public BBAttribute(string id, string name, Func<IAttributeRenderingContext, string> contentTransformer, HtmlEncodingMode htmlEncodingMode)
         {
-            if (id == null) throw new ArgumentNullException("id");
-            if (name == null) throw new ArgumentNullException("name");
-            if (!Enum.IsDefined(typeof(HtmlEncodingMode), htmlEncodingMode)) throw new ArgumentException("htmlEncodingMode");
+            if (!Enum.IsDefined(typeof(HtmlEncodingMode), htmlEncodingMode))
+                throw new ArgumentException(nameof(htmlEncodingMode));
 
-            ID = id;
-            Name = name;
+            ID = id ?? throw new ArgumentNullException(nameof(id));
+            Name = name ?? throw new ArgumentNullException(nameof(name));
             ContentTransformer = contentTransformer;
             HtmlEncodingMode = htmlEncodingMode;
         }

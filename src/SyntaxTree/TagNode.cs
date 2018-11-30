@@ -19,8 +19,7 @@ namespace CodeKicker.BBCode.SyntaxTree
         public TagNode(BBTag tag, IEnumerable<SyntaxTreeNode> subNodes)
             : base(subNodes)
         {
-            if (tag == null) throw new ArgumentNullException("tag");
-            Tag = tag;
+            Tag = tag ?? throw new ArgumentNullException(nameof(tag));
             AttributeValues = new Dictionary<BBAttribute, string>();
         }
 
@@ -64,7 +63,9 @@ namespace CodeKicker.BBCode.SyntaxTree
 
         public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
         {
-            if (subNodes == null) throw new ArgumentNullException("subNodes");
+            if (subNodes == null)
+                throw new ArgumentNullException(nameof(subNodes));
+
             return new TagNode(Tag, subNodes)
             {
                 AttributeValues = new Dictionary<BBAttribute, string>(AttributeValues),
@@ -74,7 +75,9 @@ namespace CodeKicker.BBCode.SyntaxTree
 
         internal override SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor)
         {
-            if (visitor == null) throw new ArgumentNullException("visitor");
+            if (visitor == null)
+                throw new ArgumentNullException(nameof(visitor));
+
             return visitor.Visit(this);
         }
 

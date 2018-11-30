@@ -49,14 +49,12 @@ namespace CodeKicker.BBCode
 
         public BBTag(string name, string openTagTemplate, string closeTagTemplate, bool autoRenderContent, BBTagClosingStyle tagClosingClosingStyle, Func<string, string> contentTransformer, bool enableIterationElementBehavior, params BBAttribute[] attributes)
         {
-            if (name == null) throw new ArgumentNullException("name");
-            if (openTagTemplate == null) throw new ArgumentNullException("openTagTemplate");
-            if (closeTagTemplate == null) throw new ArgumentNullException("closeTagTemplate");
-            if (!Enum.IsDefined(typeof(BBTagClosingStyle), tagClosingClosingStyle)) throw new ArgumentException("tagClosingClosingStyle");
+            if (!Enum.IsDefined(typeof(BBTagClosingStyle), tagClosingClosingStyle))
+                throw new ArgumentException(nameof(tagClosingClosingStyle));
 
-            Name = name;
-            OpenTagTemplate = openTagTemplate;
-            CloseTagTemplate = closeTagTemplate;
+            Name = name ?? throw new ArgumentNullException(nameof(name));
+            OpenTagTemplate = openTagTemplate ?? throw new ArgumentNullException(nameof(openTagTemplate));
+            CloseTagTemplate = closeTagTemplate ?? throw new ArgumentNullException(nameof(closeTagTemplate));
             AutoRenderContent = autoRenderContent;
             TagClosingStyle = tagClosingClosingStyle;
             ContentTransformer = contentTransformer;

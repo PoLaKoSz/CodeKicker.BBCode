@@ -32,25 +32,28 @@ namespace CodeKicker.BBCode
 
         public BBCodeParser(ErrorMode errorMode, string textNodeHtmlTemplate, IList<BBTag> tags)
         {
-            if (!Enum.IsDefined(typeof(ErrorMode), errorMode)) throw new ArgumentOutOfRangeException("errorMode");
-            if (tags == null) throw new ArgumentNullException("tags");
+            if (!Enum.IsDefined(typeof(ErrorMode), errorMode))
+                throw new ArgumentOutOfRangeException(nameof(errorMode));
 
             ErrorMode = errorMode;
             TextNodeHtmlTemplate = textNodeHtmlTemplate;
-            Tags = tags;
+            Tags = tags ?? throw new ArgumentNullException(nameof(tags));
         }
 
 
 
         public virtual string ToHtml(string bbCode)
         {
-            if (bbCode == null) throw new ArgumentNullException("bbCode");
+            if (bbCode == null)
+                throw new ArgumentNullException(nameof(bbCode));
+
             return ParseSyntaxTree(bbCode).ToHtml();
         }
 
         public virtual SequenceNode ParseSyntaxTree(string bbCode)
         {
-            if (bbCode == null) throw new ArgumentNullException("bbCode");
+            if (bbCode == null)
+                throw new ArgumentNullException(nameof(bbCode));
 
             Stack<SyntaxTreeNode> stack = new Stack<SyntaxTreeNode>();
             var rootNode = new SequenceNode();

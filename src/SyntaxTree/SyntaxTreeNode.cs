@@ -11,9 +11,7 @@ namespace CodeKicker.BBCode.SyntaxTree
 
 
         protected SyntaxTreeNode()
-        {
-            SubNodes = new SyntaxTreeNodeCollection();
-        }
+            : this(new SyntaxTreeNodeCollection()) { }
 
         protected SyntaxTreeNode(ISyntaxTreeNodeCollection subNodes)
         {
