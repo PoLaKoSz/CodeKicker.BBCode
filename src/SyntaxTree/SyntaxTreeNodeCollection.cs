@@ -5,10 +5,6 @@ using System.Linq;
 
 namespace CodeKicker.BBCode.SyntaxTree
 {
-    public interface ISyntaxTreeNodeCollection : IList<SyntaxTreeNode>
-    {
-    }
-
     public class SyntaxTreeNodeCollection : Collection<SyntaxTreeNode>, ISyntaxTreeNodeCollection
     {
         public SyntaxTreeNodeCollection()
@@ -38,25 +34,5 @@ namespace CodeKicker.BBCode.SyntaxTree
 
             base.InsertItem(index, item);
         }
-    }
-
-    public class ImmutableSyntaxTreeNodeCollection : ReadOnlyCollection<SyntaxTreeNode>, ISyntaxTreeNodeCollection
-    {
-        static readonly ImmutableSyntaxTreeNodeCollection empty = new ImmutableSyntaxTreeNodeCollection(new SyntaxTreeNode[0], true);
-        public static ImmutableSyntaxTreeNodeCollection Empty
-        {
-            get { return empty; }
-        }
-
-
-
-        public ImmutableSyntaxTreeNodeCollection(IEnumerable<SyntaxTreeNode> list)
-            : base(list.ToArray())
-        {
-            if (list == null) throw new ArgumentNullException(nameof(list));
-        }
-
-        internal ImmutableSyntaxTreeNodeCollection(IList<SyntaxTreeNode> list, bool isFresh)
-            : base(isFresh ? list : list.ToArray()) { }
     }
 }
