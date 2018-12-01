@@ -13,9 +13,20 @@ namespace CodeKicker.BBCode.SyntaxTree
 
 
 
+        /// <summary>
+        /// Initialize a new instance.
+        /// </summary>
+        /// <param name="tag">Can not be null!</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TagNode(BBTag tag)
             : this(tag, null) { }
 
+        /// <summary>
+        /// Initialize a new instance.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="subNodes">Can be null.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public TagNode(BBTag tag, IEnumerable<SyntaxTreeNode> subNodes)
             : base(subNodes)
         {
@@ -25,6 +36,10 @@ namespace CodeKicker.BBCode.SyntaxTree
 
 
 
+        /// <summary>
+        /// Get the node content as a formatted HTML string.
+        /// </summary>
+        /// <returns>\n replaced with <br />s</returns>
         public override string ToHtml()
         {
             string content = GetContent();
@@ -32,6 +47,9 @@ namespace CodeKicker.BBCode.SyntaxTree
             return ReplaceAttributeValues(Tag.OpenTagTemplate, content) + (Tag.AutoRenderContent ? content : null) + ReplaceAttributeValues(Tag.CloseTagTemplate, content);
         }
 
+        /// <summary>
+        /// Get the node content as a formatted BBCode string.
+        /// </summary>
         public override string ToBBCode()
         {
             string content = string.Concat(SubNodes.Select(s => s.ToBBCode()).ToArray());
@@ -56,11 +74,21 @@ namespace CodeKicker.BBCode.SyntaxTree
             return "[" + Tag.Name + attrs + "]" + content + "[/" + Tag.Name + "]";
         }
 
+        /// <summary>
+        /// Return the object's and it's SubNodes summarized
+        /// value as a text.
+        /// </summary>
         public override string ToText()
         {
             return string.Concat(SubNodes.Select(s => s.ToText()).ToArray());
         }
 
+        /// <summary>
+        /// Create a new <see cref="TagNode"/> and expand it with
+        /// the parameter <see cref="SyntaxTreeNode"/> collection.
+        /// </summary>
+        /// <param name="subNodes">Can not be null!</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public override SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes)
         {
             if (subNodes == null)
@@ -82,6 +110,11 @@ namespace CodeKicker.BBCode.SyntaxTree
         }
 
 
+        /// <summary>
+        /// Custom Equal comparer for the base class Equal function.
+        /// </summary>
+        /// <returns><c>TRUE</c>, if the object's Tag and Attributes are equal,
+        /// <c>FALSE</c> otherwise.</returns>
         protected override bool EqualsCore(SyntaxTreeNode b)
         {
             var casted = (TagNode)b;

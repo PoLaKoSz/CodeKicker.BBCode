@@ -24,10 +24,10 @@ namespace CodeKicker.BBCode
         /// <summary>
         /// Transforms the given BBCode into safe HTML with the default configuration from http://codekicker.de
         /// This method is thread safe.
-        /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
+        /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the
+        /// Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
         /// </summary>
         /// <param name="bbCode">A non-null string of valid BBCode.</param>
-        /// <returns></returns>
         public static string ToHtml(string bbCode)
         {
             if (bbCode == null)
@@ -39,7 +39,8 @@ namespace CodeKicker.BBCode
         /// <summary>
         /// Encodes an arbitrary string to be valid BBCode. Example: "[b]" => "\[b\]". The resulting string is safe against
         /// BBCode-Injection attacks.
-        /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
+        /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the Creative
+        /// Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
         /// </summary>
         public static string EscapeText(string text)
         {
@@ -73,7 +74,8 @@ namespace CodeKicker.BBCode
         /// <summary>
         /// Decodes a string of BBCode that only contains text (no tags). Example: "\[b\]" => "[b]". This is the reverse
         /// oepration of EscapeText.
-        /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
+        /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the
+        /// Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
         /// </summary>
         public static string UnescapeText(string text)
         {
@@ -83,6 +85,14 @@ namespace CodeKicker.BBCode
             return text.Replace("\\[", "[").Replace("\\]", "]").Replace("\\\\", "\\");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="node"></param>
+        /// <param name="getTextSpansToReplace"></param>
+        /// <param name="tagFilter"></param>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="ArgumentNullException"></exception>
         public static SyntaxTreeNode ReplaceTextSpans(SyntaxTreeNode node, Func<string, IList<TextSpanReplaceInfo>> getTextSpansToReplace, Func<TagNode, bool> tagFilter)
         {
             if (node == null)

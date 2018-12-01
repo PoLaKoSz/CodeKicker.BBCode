@@ -5,7 +5,9 @@ namespace CodeKicker.BBCode.SyntaxTree
 {
     public abstract class SyntaxTreeNode : IEquatable<SyntaxTreeNode>
     {
-        //not null
+        /// <summary>
+        /// Never null.
+        /// </summary>
         public ISyntaxTreeNodeCollection SubNodes { get; private set; }
 
 
@@ -13,11 +15,20 @@ namespace CodeKicker.BBCode.SyntaxTree
         protected SyntaxTreeNode()
             : this(new SyntaxTreeNodeCollection()) { }
 
+        /// <summary>
+        /// Initialize the class with a predefinied <see cref="ISyntaxTreeNodeCollection"/>.
+        /// </summary>
+        /// <param name="subNodes">Can be null.</param>
         protected SyntaxTreeNode(ISyntaxTreeNodeCollection subNodes)
         {
             SubNodes = subNodes ?? new SyntaxTreeNodeCollection();
         }
 
+        /// <summary>
+        /// Initialize the class with a collection of <see cref="SyntaxTreeNode"/> which
+        /// will be encapsulated in a <see cref="SyntaxTreeNodeCollection"/>.
+        /// </summary>
+        /// <param name="subNodes">Can be null.</param>
         protected SyntaxTreeNode(IEnumerable<SyntaxTreeNode> subNodes)
         {
             SubNodes = subNodes == null ? new SyntaxTreeNodeCollection() : new SyntaxTreeNodeCollection(subNodes);
@@ -25,10 +36,22 @@ namespace CodeKicker.BBCode.SyntaxTree
 
 
 
+        /// <summary>
+        /// Custom implementation for derived classes how
+        /// to display it's content as HTML.
+        /// </summary>
         public abstract string ToHtml();
 
+        /// <summary>
+        /// Custom implementation for derived classes how
+        /// to display it's content as a BBCode.
+        /// </summary>
         public abstract string ToBBCode();
 
+        /// <summary>
+        /// Custom implementation for derived classes how
+        /// to display it's content as a text.
+        /// </summary>
         public abstract string ToText();
 
         public abstract SyntaxTreeNode SetSubNodes(IEnumerable<SyntaxTreeNode> subNodes);
@@ -37,20 +60,35 @@ namespace CodeKicker.BBCode.SyntaxTree
         internal abstract SyntaxTreeNode AcceptVisitor(SyntaxTreeVisitor visitor);
 
 
+        /// <summary>
+        /// Custom Equal comparer for the derived classes.
+        /// </summary>
         protected abstract bool EqualsCore(SyntaxTreeNode b);
 
 
-        //equality members
+        /// <summary>
+        /// Check for reference equality.
+        /// </summary>
+        /// <returns><c>TRUE</c> if the two parameter has the same reference
+        /// and their SubModules too, <c>FALSE</c> otherwise.</returns>
         public bool Equals(SyntaxTreeNode other)
         {
             return this == other;
         }
 
+        /// <summary>
+        /// Check for reference equality.
+        /// </summary>
+        /// <returns><c>TRUE</c> if the two parameter has the same reference
+        /// and their SubModules too, <c>FALSE</c> otherwise.</returns>
         public override bool Equals(object obj)
         {
             return Equals(obj as SyntaxTreeNode);
         }
 
+        /// <summary>
+        /// Return the object only with BBCodes.
+        /// </summary>
         public override string ToString()
         {
             return ToBBCode();
@@ -61,6 +99,11 @@ namespace CodeKicker.BBCode.SyntaxTree
             return 1008241338 + EqualityComparer<ISyntaxTreeNodeCollection>.Default.GetHashCode(SubNodes);
         }
 
+        /// <summary>
+        /// Check for reference equality.
+        /// </summary>
+        /// <returns><c>TRUE</c> if the two parameter has the same reference
+        /// and their SubModules too, <c>FALSE</c> otherwise.</returns>
         public static bool operator ==(SyntaxTreeNode a, SyntaxTreeNode b)
         {
             if (ReferenceEquals(a, b)) return true;
@@ -78,6 +121,11 @@ namespace CodeKicker.BBCode.SyntaxTree
             return a.EqualsCore(b);
         }
 
+        /// <summary>
+        /// Check for reference inequality.
+        /// </summary>
+        /// <returns><c>FALSE</c> if the two parameter has the same reference
+        /// and their SubModules too, <c>TRUE</c> otherwise.</returns>
         public static bool operator !=(SyntaxTreeNode a, SyntaxTreeNode b)
         {
             return !(a == b);

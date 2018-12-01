@@ -4,6 +4,9 @@ namespace CodeKicker.BBCode.SyntaxTree
 {
     public class SyntaxTreeVisitor
     {
+        /// <param name="node">Can be null.</param>
+        /// <returns><c>Null</c>, if the parameter is also null or a
+        /// <c><see cref="SyntaxTreeNode"/></c>.</returns>
         public SyntaxTreeNode Visit(SyntaxTreeNode node)
         {
             if (node == null)
@@ -13,6 +16,9 @@ namespace CodeKicker.BBCode.SyntaxTree
         }
 
 
+        /// <param name="node">Can be null.</param>
+        /// <returns><c>Null</c>, if the parameter is also null or a
+        /// <c><see cref="SyntaxTreeNode"/></c>.</returns>
         protected internal virtual SyntaxTreeNode Visit(SequenceNode node)
         {
             if (node == null)
@@ -26,6 +32,9 @@ namespace CodeKicker.BBCode.SyntaxTree
                 return node.SetSubNodes(modifiedSubNodes); //subnodes were modified
         }
 
+        /// <param name="node">Can be null.</param>
+        /// <returns><c>Null</c>, if the parameter is also null or a
+        /// <c><see cref="SyntaxTreeNode"/></c>.</returns>
         protected internal virtual SyntaxTreeNode Visit(TagNode node)
         {
             if (node == null)
@@ -39,6 +48,9 @@ namespace CodeKicker.BBCode.SyntaxTree
                 return node.SetSubNodes(modifiedSubNodes); //subnodes were modified
         }
 
+        /// <summary>
+        /// Return the parameter <see cref="TextNode"/>.
+        /// </summary>
         protected internal virtual SyntaxTreeNode Visit(TextNode node)
         {
             return node;

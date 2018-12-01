@@ -9,27 +9,63 @@ namespace CodeKicker.BBCode
     /// <summary>
     /// This class is useful for creating a custom parser. You can customize which tags are available
     /// and how they are translated to HTML.
-    /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter the Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
+    /// In order to use this library, we require a link to http://codekicker.de/ from you. Licensed unter
+    /// the Creative Commons Attribution 3.0 Licence: http://creativecommons.org/licenses/by/3.0/.
     /// </summary>
     public class BBCodeParser
     {
+        /// <summary>
+        /// Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.
+        /// </summary>
         public IList<BBTag> Tags { get; private set; }
 
         public string TextNodeHtmlTemplate { get; private set; }
 
+        /// <summary>
+        /// Exception throwing rule for the parser.
+        /// </summary>
         public ErrorMode ErrorMode { get; private set; }
 
 
 
+        /// <summary>
+        /// Initalize a new instance with DISABLED Exception throwing.
+        /// </summary>
+        /// <param name="tags">Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public BBCodeParser(IList<BBTag> tags)
             : this(default(ErrorMode), null, tags) { }
 
+        /// <summary>
+        /// Initalize a new instance without a custom <see cref="TextNode"/> HTML templace.
+        /// </summary>
+        /// <param name="errorMode">Exception throwing rule for the parser.</param>
+        /// <param name="tags">Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public BBCodeParser(ErrorMode errorMode, IList<BBTag> tags)
             : this(errorMode, null, tags) { }
 
+        /// <summary>
+        /// Initialize a new parser instance with a custom <see cref="TextNode"/> HTML templace.
+        /// </summary>
+        /// <param name="textNodeHtmlTemplate">Template how to parse the <see cref="TextNode"/>s.</param>
+        /// <param name="tags">Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public BBCodeParser(string textNodeHtmlTemplate, IList<BBTag> tags)
             : this(default(ErrorMode), textNodeHtmlTemplate, tags) { }
 
+        /// <summary>
+        /// Initialize a new parser instance.
+        /// </summary>
+        /// <param name="errorMode">Exception throwing rule for the parser.</param>
+        /// <param name="textNodeHtmlTemplate"></param>
+        /// <param name="tags">Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public BBCodeParser(ErrorMode errorMode, string textNodeHtmlTemplate, IList<BBTag> tags)
         {
             if (!Enum.IsDefined(typeof(ErrorMode), errorMode))
@@ -42,6 +78,11 @@ namespace CodeKicker.BBCode
 
 
 
+        /// <summary>
+        /// Parse the input BBCode to HTML.
+        /// </summary>
+        /// <param name="bbCode">Raw BBCode.</param>
+        /// <exception cref="ArgumentNullException"></exception>
         public virtual string ToHtml(string bbCode)
         {
             if (bbCode == null)
