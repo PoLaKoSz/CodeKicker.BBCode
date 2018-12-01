@@ -5,6 +5,7 @@ using CodeKicker.BBCode.SyntaxTree;
 
 namespace CodeKicker.BBCode
 {
+    [Obsolete("Use the BBCodeParser class instead!", error: false)]
     public static class BBCode
     {
         private static readonly BBCodeParser _defaultParser;
