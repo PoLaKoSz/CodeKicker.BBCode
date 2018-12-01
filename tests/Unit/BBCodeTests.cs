@@ -7,9 +7,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace CodeKicker.BBCode.Tests.Unit
 {
     [TestClass]
-    public partial class BBCodeTest
+    public class BBCodeTests
     {
         [TestMethod]
+        [DataRow("")]
         public void DefaultParserWellconfigured(string input)
         {
             try
@@ -22,20 +23,34 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         [TestMethod]
+        [DataRow("", "")]
         public void Escape_NoCrash(string text, out string escaped)
         {
             escaped = BBCode.EscapeText(text);
         }
 
         [TestMethod]
-        public void Escape_Unescape_Roundtrip(string text)
+        [DataRow("<a href=\"\"></a>")]
+        public void Can_Escape_And_Unescape_HTML(string text)
         {
             var escaped = BBCode.EscapeText(text);
             var unescaped = BBCode.UnescapeText(escaped);
+
             Assert.AreEqual(text, unescaped);
         }
 
         [TestMethod]
+        [DataRow("[url=https://codekicker.de][/url]")]
+        public void Can_Escape_And_Unescape_BBode(string text)
+        {
+            var escaped = BBCode.EscapeText(text);
+            var unescaped = BBCode.UnescapeText(escaped);
+
+            Assert.AreEqual(text, unescaped);
+        }
+
+        [TestMethod]
+        [DataRow("<div><script>function asd() {}</script></div>")]
         public void EscapedStringIsSafeForParsing(string text)
         {
             var escaped = BBCode.EscapeText(text);
@@ -49,11 +64,13 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         [TestMethod]
+        [DataRow("<b>MyTest<div>in the DIV</div></b>")]
         public void Escape_Parse_ToText_Roundtrip(string text)
         {
             var escaped = BBCode.EscapeText(text);
             var unescaped = GetSimpleParser().ParseSyntaxTree(escaped);
             var text2 = unescaped.ToText();
+
             Assert.AreEqual(text, text2);
         }
 
@@ -86,6 +103,7 @@ namespace CodeKicker.BBCode.Tests.Unit
         {
             var tree1 = BBCodeTestUtil.GetParserForTest(ErrorMode.Strict, false, BBTagClosingStyle.AutoCloseElement, false).ParseSyntaxTree(bbCode);
             var tree2 = BBCode.ReplaceTextSpans(tree1, getTextSpansToReplace ?? (txt => new TextSpanReplaceInfo[0]), tagFilter);
+
             Assert.AreEqual(expected, tree2.ToBBCode());
         }
 
