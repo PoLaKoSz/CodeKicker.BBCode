@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeKicker.BBCode", "CodeKicker.BBCode\CodeKicker.BBCode.csproj", "{1C8A5FB6-633A-43BD-B1B7-75A0DDC308F5}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.106
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeKicker.BBCode", "src\CodeKicker.BBCode.csproj", "{1C8A5FB6-633A-43BD-B1B7-75A0DDC308F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeKicker.BBCode.Tests", "CodeKicker.BBCode.Tests\CodeKicker.BBCode.Tests.csproj", "{3E76347E-B598-4F3B-9B13-8623466D7D06}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{86EE438E-7B21-46F9-8659-FB9FDB235AB6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Unit", "tests\Unit\Unit.csproj", "{3E76347E-B598-4F3B-9B13-8623466D7D06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,5 +26,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{3E76347E-B598-4F3B-9B13-8623466D7D06} = {86EE438E-7B21-46F9-8659-FB9FDB235AB6}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5F2E78D0-87B7-4CD9-B526-928F62234296}
 	EndGlobalSection
 EndGlobal
