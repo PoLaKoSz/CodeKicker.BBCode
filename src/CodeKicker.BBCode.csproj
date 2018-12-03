@@ -3,5 +3,20 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>CodeKicker.BBCode</RootNamespace>
+    <Version>5.2.0</Version>
+    <PackageLicenseUrl>https://github.com/PoLaKoSz/CodeKicker.BBCode/blob/master/LICENCE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/PoLaKoSz/CodeKicker.BBCode</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PoLaKoSz/CodeKicker.BBCode</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>bbcode parser html net standard library fast codekicker</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>Successor of the popular but abandoned CodeKicker.BBCode parser ported to .NET Stanadard with fully documented source code. This is a fork of the https://github.com/Pablissimo/CodeKicker.BBCode-Mod/ repository. It can transform any BBCode into HTML or into an in-memory syntax tree that can be analyzed or translated. All tags are fully customizable, nothing is hardcoded.</Description>
+    <PackageId>PoLaKoSz.CodeKicker.BBCode</PackageId>
+    <Authors>CodeKicker Team</Authors>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>D:\GitHub\CodeKicker.BBCode\src\CodeKicker.BBCode.xml</DocumentationFile>
   </PropertyGroup>
 </Project>
