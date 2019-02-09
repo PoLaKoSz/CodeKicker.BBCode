@@ -101,7 +101,7 @@ namespace CodeKicker.BBCode.Tests.Unit
 
         static void ReplaceTextSpans_ManualTestCases_TestCase(string bbCode, string expected, Func<string, IList<TextSpanReplaceInfo>> getTextSpansToReplace, Func<TagNode, bool> tagFilter)
         {
-            var tree1 = BBCodeTestUtil.GetParserForTest(ErrorMode.Strict, false, BBTagClosingStyle.AutoCloseElement, false).ParseSyntaxTree(bbCode);
+            var tree1 = BBCodeTestUtil.GetParserForTest(new StrictParsing(), false, BBTagClosingStyle.AutoCloseElement, false).ParseSyntaxTree(bbCode);
             var tree2 = BBCode.ReplaceTextSpans(tree1, getTextSpansToReplace ?? (txt => new TextSpanReplaceInfo[0]), tagFilter);
 
             Assert.AreEqual(expected, tree2.ToBBCode());

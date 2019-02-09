@@ -1,39 +1,22 @@
-﻿using System.Resources;
+﻿using System;
 
 namespace CodeKicker.BBCode
 {
-    public abstract class MessagesHelper
+    public interface IExceptions
     {
-        private static readonly ResourceManager _resMgr;
-
-
-
-        static MessagesHelper()
-        {
-            _resMgr = new ResourceManager(typeof(Messages));
-        }
-
-
-
         /// <summary>
         /// The tag {tagName} has a duplicate attribute {attributeName}.
         /// </summary>
         /// <param name="tagName">Non null name of the attribute owner.</param>
         /// <param name="attributeName">Non null name of the attribute.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string DuplicateAttribute(string tagName, string attributeName)
-        {
-            return string.Format(GetString("DuplicateAttribute"), tagName, attributeName);
-        }
+        bool DuplicateAttribute(string tagName, string attributeName);
 
         /// <summary>
         /// The character "\" is used to escape "]" and "[". Please escape it like this "\\".
         /// </summary>
         /// <returns>Non null formatted string.</returns>
-        protected string EscapeChar()
-        {
-            return GetString("EscapeChar");
-        }
+        bool EscapeChar();
 
         /// <summary>
         /// The tag {tagName} cannot have a value.
@@ -41,10 +24,7 @@ namespace CodeKicker.BBCode
         /// <param name="tagName">Non null name of the tag which not
         /// contains any default attribute.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string MissingDefaultAttribute(string tagName)
-        {
-            return GetString("MissingDefaultAttribute", tagName);
-        }
+        bool MissingDefaultAttribute(string tagName);
 
         /// <summary>
         /// In the tag {tagName} no attributes are allowed.
@@ -52,30 +32,21 @@ namespace CodeKicker.BBCode
         /// <param name="tagName">Non null name of the tag that
         /// mustn't have any attribute.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string NoAttributesAllowed(string tagName)
-        {
-            return GetString("NoAttributesAllowed", tagName);
-        }
+        bool NoAttributesAllowed(string tagName);
 
         /// <summary>
         /// The character "]" cannot be used in text or code without
         /// beeing escaped. Please write "\]" instead.
         /// </summary>
         /// <returns>Non null formatted string.</returns>
-        protected string NonEscapedChar()
-        {
-            return GetString("NonescapedChar");
-        }
+        bool NonEscapedChar();
 
         /// <summary>
         /// The tag {tagName} was not closed correctly.
         /// </summary>
         /// <param name="tagName">Non null name of the not closed tag.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string TagNotClosed(string tagName)
-        {
-            return GetString("TagNotClosed", tagName);
-        }
+        bool TagNotClosed(string tagName);
 
         /// <summary>
         /// The end-tag {startTagName} does not match the preceding start-tag {endTagName}.
@@ -83,20 +54,14 @@ namespace CodeKicker.BBCode
         /// <param name="startTagName">Non null name of the attribute owner.</param>
         /// <param name="endTagName">Non null name of the attribute.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string TagNotMatching(string startTagName, string endTagName)
-        {
-            return GetString("TagNotMatching", startTagName, endTagName);
-        }
+        bool TagNotMatching(string startTagName, string endTagName);
 
         /// <summary>
         /// The tag {tagName} has not been closed.
         /// </summary>
         /// <param name="tagName">Non null name of the not opened tag.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string TagNotOpened(string tagName)
-        {
-            return GetString("TagNotOpened", tagName);
-        }
+        bool TagNotOpened(string tagName);
 
         /// <summary>
         /// The tag {tagName} does not have an attribute {attributeName}.
@@ -104,30 +69,13 @@ namespace CodeKicker.BBCode
         /// <param name="tagName">Non null name of the attribute owner.</param>
         /// <param name="attributeName">Non null name of the attribute.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string UnknownAttribute(string tagName, string attributeName)
-        {
-            return GetString("UnknownAttribute", tagName, attributeName);
-        }
+        bool UnknownAttribute(string tagName, string attributeName);
 
         /// <summary>
         /// The tag {tagName} does not exists.
         /// </summary>
         /// <param name="tagName">Non null name of the unknown tag.</param>
         /// <returns>Non null formatted string.</returns>
-        protected string UnknownTag(string tagName)
-        {
-            return GetString("UnknownTag", tagName);
-        }
-
-
-        private string GetString(string key)
-        {
-            return _resMgr.GetString(key);
-        }
-
-        private string GetString(string key, params string[] parameters)
-        {
-            return string.Format(_resMgr.GetString(key), parameters);
-        }
+        bool UnknownTag(string tagName);
     }
 }

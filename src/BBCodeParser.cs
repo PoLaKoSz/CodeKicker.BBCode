@@ -13,6 +13,8 @@ namespace CodeKicker.BBCode
     /// </summary>
     public class BBCodeParser
     {
+        private readonly IExceptions _exception;
+
         /// <summary>
         /// Ruleset how to parse the input BBCode will
         /// be passed in the ToHTML(string bbCode) function.
@@ -73,6 +75,48 @@ namespace CodeKicker.BBCode
             ErrorMode = errorMode;
             TextNodeHtmlTemplate = textNodeHtmlTemplate;
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
+
+            if (errorMode == ErrorMode.Strict)
+                _exception = new StrictParsing();
+            else if (errorMode == ErrorMode.TryErrorCorrection)
+                _exception = new ErrorCorrectorParsing();
+            else if (errorMode == ErrorMode.ErrorFree)
+                _exception = new ErrorFreeParsing();
+        }
+
+
+
+        /// <summary>
+        /// Initalize a new instance without a custom <see cref="TextNode"/> HTML templace.
+        /// </summary>
+        /// <param name="exceptionHandling">Exception throwing rule for the parser. Non null.</param>
+        /// <param name="tags">Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public BBCodeParser(IExceptions exceptionHandling, IList<BBTag> tags)
+            : this(exceptionHandling, null, tags) { }
+
+        /// <summary>
+        /// Initialize a new parser instance.
+        /// </summary>
+        /// <param name="exceptionHandling">Exception throwing rule for the parser. Non null.</param>
+        /// <param name="textNodeHtmlTemplate"></param>
+        /// <param name="tags">Ruleset how to parse the input BBCode will
+        /// be passed in the ToHTML(string bbCode) function.</param>
+        /// <exception cref="ArgumentNullException"></exception>
+        public BBCodeParser(IExceptions exceptionHandling, string textNodeHtmlTemplate, IList<BBTag> tags)
+        {
+            TextNodeHtmlTemplate = textNodeHtmlTemplate;
+            Tags = tags ?? throw new ArgumentNullException(nameof(tags));
+
+            _exception = exceptionHandling ?? throw new ArgumentNullException(nameof(exceptionHandling));
+
+            if (exceptionHandling.GetType() == typeof(StrictParsing))
+                ErrorMode = ErrorMode.Strict;
+            else if (exceptionHandling.GetType() == typeof(ErrorCorrectorParsing))
+                ErrorMode = ErrorMode.TryErrorCorrection;
+            else if (exceptionHandling.GetType() == typeof(ErrorFreeParsing))
+                ErrorMode = ErrorMode.ErrorFree;
         }
 
 
@@ -124,7 +168,7 @@ namespace CodeKicker.BBCode
                 var node = (TagNode)stack.Pop();
 
                 if (node.Tag.RequiresClosingTag && ErrorMode == ErrorMode.Strict)
-                    throw new BBCodeParsingException(MessagesHelper.GetString("TagNotClosed", node.Tag.Name));
+                    _exception.TagNotClosed(node.Tag.Name);
             }
 
             if (stack.Count != 1)
@@ -187,8 +231,8 @@ namespace CodeKicker.BBCode
                         TagNode openingNode = stack.Peek() as TagNode; //could also be a SequenceNode
 
                         if (openingNode.Tag != tagNode.Tag
-                            && ErrorMode == ErrorMode.Strict
-                            && ErrorOrReturn("TagNotMatching", tagNode.Tag.Name, openingNode.Tag.Name))
+                            && ErrorMode == ErrorMode.Strict // this prevent ErorrCorrectorParsing to throw exception
+                            && _exception.TagNotMatching(tagNode.Tag.Name, openingNode.Tag.Name))
                             return false;
 
                         while (true)
@@ -200,8 +244,8 @@ namespace CodeKicker.BBCode
                                 //a nesting imbalance was detected
 
                                 if (openingNode.Tag.RequiresClosingTag
-                                    && ErrorMode == ErrorMode.Strict
-                                    && ErrorOrReturn("TagNotMatching", tagNode.Tag.Name, openingNode.Tag.Name))
+                                    && ErrorMode == ErrorMode.Strict // this prevent ErorrCorrectorParsing to throw exception
+                                    && _exception.TagNotMatching(tagNode.Tag.Name, openingNode.Tag.Name))
                                     return false;
                                 //close the (wrongly) open tag. we have already popped so do nothing.
                             }
@@ -272,14 +316,14 @@ namespace CodeKicker.BBCode
                 {
                     TagNode openingNode = stack.Peek() as TagNode; //could also be a SequenceNode
 
-                    if (openingNode == null && ErrorOrReturn("TagNotOpened", tagEnd))
+                    if (openingNode == null && _exception.TagNotOpened(tagEnd))
                         return false;
 
                     if (!openingNode.Tag.Name.Equals(tagEnd, StringComparison.OrdinalIgnoreCase))
                     {
                         //a nesting imbalance was detected
 
-                        if (openingNode.Tag.RequiresClosingTag && ErrorOrReturn("TagNotMatching", tagEnd, openingNode.Tag.Name))
+                        if (openingNode.Tag.RequiresClosingTag && _exception.TagNotMatching(tagEnd, openingNode.Tag.Name))
                             return false;
                         else
                             stack.Pop();
@@ -342,7 +386,7 @@ namespace CodeKicker.BBCode
                 return null;
 
             BBTag tag = Tags.SingleOrDefault(t => t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
-            if (tag == null && ErrorOrReturn("UnknownTag", tagName))
+            if (tag == null && _exception.UnknownTag(tagName))
                 return null;
 
             TagNode resultTagNode = new TagNode(tag);
@@ -352,7 +396,7 @@ namespace CodeKicker.BBCode
             {
                 BBAttribute attr = tag.FindAttribute("");
 
-                if (attr == null && ErrorOrReturn("UnknownAttribute", tag.Name, "\"Default Attribute\""))
+                if (attr == null && _exception.UnknownAttribute(tag.Name, "\"Default Attribute\""))
                     return null;
 
                 resultTagNode.AttributeValues.Add(attr, defaultAttrValue);
@@ -369,24 +413,24 @@ namespace CodeKicker.BBCode
 
                 string attrVal = ParseAttributeValue(input, ref currentIndex);
 
-                if (attrVal == null && ErrorOrReturn(""))
+                if (attrVal == null && _exception.UnknownTag(tag.Name))
                     return null;
 
-                if (tag.Attributes == null && ErrorOrReturn("UnknownTag", tag.Name))
+                if (tag.Attributes == null && _exception.UnknownTag(tag.Name))
                     return null;
 
                 BBAttribute attr = tag.FindAttribute(attrName);
 
-                if (attr == null && ErrorOrReturn("UnknownTag", tag.Name, attrName))
+                if (attr == null && _exception.UnknownTag(tag.Name))
                     return null;
 
-                if (resultTagNode.AttributeValues.ContainsKey(attr) && ErrorOrReturn("DuplicateAttribute", tagName, attrName))
+                if (resultTagNode.AttributeValues.ContainsKey(attr) && _exception.DuplicateAttribute(tagName, attrName))
                     return null;
 
                 resultTagNode.AttributeValues.Add(attr, attrVal);
             }
 
-            if (!ParseChar(input, ref currentIndex, ']') && ErrorOrReturn("TagNotClosed", tagName))
+            if (!ParseChar(input, ref currentIndex, ']') && _exception.TagNotClosed(tagName))
                 return null;
 
             ParseWhitespace(input, ref currentIndex);
@@ -421,10 +465,8 @@ namespace CodeKicker.BBCode
 
             if (!ParseChar(input, ref currentIndex, ']'))
             {
-                if (ErrorMode == ErrorMode.ErrorFree)
+                if (_exception.TagNotClosed(tagName))
                     return null;
-                else
-                    throw new BBCodeParsingException("");
             }
 
             BBTag tag = Tags.SingleOrDefault(t => t.Name.Equals(tagName, StringComparison.OrdinalIgnoreCase));
@@ -458,8 +500,7 @@ namespace CodeKicker.BBCode
 
                 if (input[currentIndex] == ']' && !escapeFound)
                 {
-                    if (ErrorMode == ErrorMode.Strict)
-                        throw new BBCodeParsingException(MessagesHelper.GetString("NonescapedChar"));
+                    _exception.NonEscapedChar();
                 }
 
                 if (input[currentIndex] == '\\' && !escapeFound)
@@ -471,8 +512,7 @@ namespace CodeKicker.BBCode
                 {
                     if (!(input[currentIndex] == '[' || input[currentIndex] == ']' || input[currentIndex] == '\\'))
                     {
-                        if (ErrorMode == ErrorMode.Strict)
-                            throw new BBCodeParsingException(MessagesHelper.GetString("EscapeChar"));
+                        _exception.EscapeChar();
                     }
                     escapeFound = false;
                 }
@@ -674,28 +714,6 @@ namespace CodeKicker.BBCode
             pos++;
 
             return true;
-        }
-
-        /// <summary>
-        /// Return TRUE or a <see cref="BBCodeParsingException"/> depending on the settings.
-        /// </summary>
-        /// <param name="msgKey">Non null string which should exists in the Resources.</param>
-        /// <param name="parameters">Custom parameters.</param>
-        /// <returns>TRUE if error throwing disabled, <see cref="BBCodeParsingException" /> otherwise.</returns>
-        /// <exception cref="BBCodeParsingException"></exception>
-        private bool ErrorOrReturn(string msgKey, params string[] parameters)
-        {
-            if (ErrorMode == ErrorMode.ErrorFree)
-                return true;
-            else
-            {
-                string message = "";
-
-                if (!string.IsNullOrEmpty(msgKey))
-                    message = MessagesHelper.GetString(msgKey, parameters);
-
-                throw new BBCodeParsingException(message);
-            }
         }
     }
 }

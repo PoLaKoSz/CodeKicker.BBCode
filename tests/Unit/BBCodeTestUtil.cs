@@ -8,7 +8,21 @@ namespace CodeKicker.BBCode.Tests.Unit
 {
     public static class BBCodeTestUtil
     {
-        internal static Random Random = new Random();
+        internal static readonly Random Random;
+        internal static readonly ErrorFreeParsing ErrorFreeParsing;
+        internal static readonly ErrorCorrectorParsing ErrorCorrectorParsing;
+        internal static readonly StrictParsing StrictParsing;
+
+
+
+        static BBCodeTestUtil()
+        {
+            Random = new Random();
+
+            ErrorFreeParsing = new ErrorFreeParsing();
+            ErrorCorrectorParsing = new ErrorCorrectorParsing();
+            StrictParsing = new StrictParsing();
+        }
 
 
 
@@ -21,7 +35,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             return parentNode;
         }
 
-        public static BBCodeParser GetParserForTest(ErrorMode errorMode, bool includePlaceholder, BBTagClosingStyle listItemBBTagClosingStyle, bool enableIterationElementBehavior)
+        public static BBCodeParser GetParserForTest(IExceptions errorMode, bool includePlaceholder, BBTagClosingStyle listItemBBTagClosingStyle, bool enableIterationElementBehavior)
         {
             BBTag placeHolderTag = null;
 
@@ -49,7 +63,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             }.Where(tag => tag != null).ToArray());
         }
 
-        public static BBCodeParser GetSimpleParserForTest(ErrorMode errorMode)
+        public static BBCodeParser GetSimpleParserForTest(IExceptions errorMode)
         {
             return new BBCodeParser(errorMode, null, new[]
             {
@@ -59,12 +73,12 @@ namespace CodeKicker.BBCode.Tests.Unit
             });
         }
 
-        public static string SimpleBBEncodeForTest(string bbCode, ErrorMode errorMode)
+        public static string SimpleBBEncodeForTest(string bbCode, IExceptions errorMode)
         {
             return GetSimpleParserForTest(errorMode).ToHtml(bbCode);
         }
 
-        public static bool IsValid(string bbCode, ErrorMode errorMode)
+        public static bool IsValid(string bbCode, IExceptions errorMode)
         {
             try
             {
@@ -79,7 +93,7 @@ namespace CodeKicker.BBCode.Tests.Unit
 
         public static SequenceNode GetAnyTree()
         {
-            var parser = GetParserForTest(RandomErrorMode(), true, RandomTagClosingStyle(), false);
+            var parser = GetParserForTest(new StrictParsing(), true, RandomTagClosingStyle(), false);
 
             return CreateRootNode(parser.Tags.ToArray());
         }
@@ -151,12 +165,6 @@ namespace CodeKicker.BBCode.Tests.Unit
                 return content;
 
             return null;
-        }
-
-        private static ErrorMode RandomErrorMode()
-        {
-            Array values = Enum.GetValues(typeof(ErrorMode));
-            return (ErrorMode)values.GetValue(Random.Next(values.Length));
         }
 
         private static BBTagClosingStyle RandomTagClosingStyle()
