@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
-    [TestClass]
     public class BBCodeTests
     {
-        [TestMethod]
-        [DataRow("")]
+        [TestCase("")]
         public void DefaultParserWellconfigured(string input)
         {
             try
@@ -22,15 +20,13 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        [TestMethod]
-        [DataRow("", "")]
-        public void Escape_NoCrash(string text, out string escaped)
+        [TestCase("")]
+        public void Escape_NoCrash(string text)
         {
-            escaped = BBCode.EscapeText(text);
+            Assert.AreEqual("", BBCode.EscapeText(text));
         }
 
-        [TestMethod]
-        [DataRow("<a href=\"\"></a>")]
+        [TestCase("<a href=\"\"></a>")]
         public void Can_Escape_And_Unescape_HTML(string text)
         {
             var escaped = BBCode.EscapeText(text);
@@ -39,8 +35,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(text, unescaped);
         }
 
-        [TestMethod]
-        [DataRow("[url=https://codekicker.de][/url]")]
+        [TestCase("[url=https://codekicker.de][/url]")]
         public void Can_Escape_And_Unescape_BBode(string text)
         {
             var escaped = BBCode.EscapeText(text);
@@ -49,8 +44,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(text, unescaped);
         }
 
-        [TestMethod]
-        [DataRow("<div><script>function asd() {}</script></div>")]
+        [TestCase("<div><script>function asd() {}</script></div>")]
         public void EscapedStringIsSafeForParsing(string text)
         {
             var escaped = BBCode.EscapeText(text);
@@ -63,8 +57,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 Assert.AreEqual(text, ((TextNode)ast.SubNodes.Single()).Text);
         }
 
-        [TestMethod]
-        [DataRow("<b>MyTest<div>in the DIV</div></b>")]
+        [TestCase("<b>MyTest<div>in the DIV</div></b>")]
         public void Escape_Parse_ToText_Roundtrip(string text)
         {
             var escaped = BBCode.EscapeText(text);
@@ -79,7 +72,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             return new BBCodeParser(new List<BBTag>());
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceTextSpans_ManualTestCases()
         {
             ReplaceTextSpans_ManualTestCases_TestCase("", "", null, null);
@@ -107,7 +100,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(expected, tree2.ToBBCode());
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceTextSpans_WhenNoModifications_TreeIsPreserved()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -115,7 +108,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreSame(tree1, tree2);
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceTextSpans_WhenEmptyModifications_TreeIsPreserved()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -123,7 +116,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(tree1.ToBBCode(), tree2.ToBBCode());
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceTextSpans_WhenEverythingIsConvertedToX_OutputContainsOnlyX_CheckedWithContains()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -131,7 +124,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(!tree2.ToBBCode().Contains("a"));
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceTextSpans_WhenEverythingIsConvertedToX_OutputContainsOnlyX_CheckedWithTreeWalk()
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -139,7 +132,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             new TextAssertVisitor(str => Assert.IsTrue(str == "x")).Visit(tree2);
         }
 
-        [TestMethod]
+        [Test]
         public void ReplaceTextSpans_ArbitraryTextSpans_NoCrash()
         {
             //var tree1 = BBCodeTestUtil.GetAnyTree();

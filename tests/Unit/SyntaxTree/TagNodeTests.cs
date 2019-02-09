@@ -1,21 +1,19 @@
 ﻿using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 {
-    [TestClass]
     public class TagNodeTests
     {
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Constructor_With_Null_Tag_Parameter_Should_Throw_ArgumentNullException()
         {
-            new TagNode(null);
+            Assert.Throws<ArgumentNullException>(() => new TagNode(null));
         }
 
-        [TestMethod]
+        [Test]
         public void Constructor_With_Null_SubNodes_Parameter_Should_Not_Throw_Exception()
         {
             new TagNode(new BBTag("", "", ""), subNodes: null);
@@ -23,7 +21,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method()
         {
             var bbTag = new BBTag("url", "<a href=\"https://codekicker.de\">", "</a>", new BBAttribute("link", ""));
@@ -46,7 +44,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToBBCode_Method()
         {
             var bbTag = new BBTag("url", "<a href=\"${link}\">", "</a>", new BBAttribute("link", ""));
@@ -69,7 +67,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToText_Method()
         {
             var bbTag = new BBTag("url", "<a href=\"${link}\">", "</a>", new BBAttribute("link", ""));
@@ -87,14 +85,14 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void SetSubNodes_Method_Should_Return_ArgumentNullException_When_Null_Passed()
         {
-            new TagNode(new BBTag("", "", "")).SetSubNodes(null);
+            Assert.Throws<ArgumentNullException>(
+                () => new TagNode(new BBTag("", "", "")).SetSubNodes(null));
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Method_Return_Type_Should_Be_TagNode()
         {
             var tagNode = new TagNode(new BBTag("b", "<b>", "</b>"));
@@ -104,7 +102,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual(typeof(TagNode), actual.GetType());
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Method_Should_Keep_Tag_Reference_In_The_Return_TagNode()
         {
             var tag = new BBTag("b", "<b>", "</b>");
@@ -115,7 +113,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(ReferenceEquals(tag, actual.Tag));
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Method_Should_Keep_SubModules_Reference_In_The_Return_TagNode()
         {
             var tagNode = new TagNode(new BBTag("b", "<b>", "</b>"));
@@ -130,7 +128,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(ReferenceEquals(subNodes[0], actual.SubNodes[0]), "IsTrue");
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Method_Should_Not_Keep_AttributeValues_Reference_In_The_Return_TagNode()
         {
             var tagNode = new TagNode(new BBTag("b", "<b>", "</b>"));

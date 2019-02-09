@@ -1,19 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
-    [TestClass]
     public class BBAttributeTests
     {
-        [TestMethod]
-        [DataRow(null, null)]
-        [DataRow("", null)]
-        [DataRow(null, "")]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [TestCase(null, null)]
+        [TestCase("", null)]
+        [TestCase(null, "")]
         public void Constructor_Should_Throw_ArgumentNullExcetpion(string id, string name)
         {
-            new BBAttribute(id, name);
+            Assert.Throws<ArgumentNullException>(() => new BBAttribute(id, name));
         }
     }
 }

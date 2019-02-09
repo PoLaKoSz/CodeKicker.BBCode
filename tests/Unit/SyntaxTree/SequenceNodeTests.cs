@@ -1,11 +1,10 @@
 ﻿using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 {
-    [TestClass]
     public class SequenceNodeTests
     {
         private readonly SyntaxTreeNodeCollection _treeNode;
@@ -35,35 +34,23 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void Constructor_Without_Parameter_Has_To_Exists()
         {
             // Just for backwards compatibility.
 
             new SequenceNode();
-
-            Assert.IsTrue(true);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Constructor_With_Null_Class_Should_Throw_ArgumentNull_Exception()
         {
-            SyntaxTreeNodeCollection syntaxTreeNodeCollection = null;
-            new SequenceNode(syntaxTreeNodeCollection);
-        }
-
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
-        public void Constructor_With_Null_IEnumerable_Should_Throw_ArgumentNull_Exception()
-        {
-            IEnumerable<SyntaxTreeNode> syntaxTreeNodeCollection = null;
-            new SequenceNode(syntaxTreeNodeCollection);
+            Assert.Throws<ArgumentNullException>(() => new SequenceNode(null));
         }
 
 
 
-        [TestMethod]
+        [Test]
         public void ToHtml_Method_Should_Return_Empty_String_When_Has_No_SubNodes()
         {
             var obj = new SequenceNode();
@@ -71,7 +58,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("", obj.ToHtml());
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_With_Deep_Tree()
         {
             var node = new SequenceNode(_treeNode);
@@ -92,7 +79,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToBBCode_Method_With_Deep_Tree()
         {
             var node = new SequenceNode(_treeNode);
@@ -113,7 +100,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToText_Method_With_Deep_Tree()
         {
             var node = new SequenceNode(_treeNode);
@@ -128,14 +115,14 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void SetSubNodes_Should_Return_ArgumenNullException_When_Null_Passed()
         {
-            new SequenceNode().SetSubNodes(null);
+            Assert.Throws<ArgumentNullException>(
+                () => new SequenceNode().SetSubNodes(null));
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Should_Return_A_SequenceNode()
         {
             var actual = new SequenceNode().SetSubNodes(new List<SequenceNode>());
@@ -143,7 +130,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual(typeof(SequenceNode), actual.GetType());
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Should_Return_A_SequenceNode_With_The_Parameter_SubNodes()
         {
             var input = new List<SequenceNode>()
@@ -158,7 +145,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
         }
 
 
-        [TestMethod]
+        [Test]
         public void Null_Should_Not_Be_Equal_With_SequenceNode()
         {
             var sequenceNode = new SequenceNode(new SyntaxTreeNodeCollection());
@@ -166,7 +153,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsFalse(sequenceNode.Equals(null));
         }
 
-        [TestMethod]
+        [Test]
         public void Two_Empty_SequenceNode_Should_Be_Equal()
         {
             var sequenceNode = new SequenceNode(new SyntaxTreeNodeCollection());
@@ -175,7 +162,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(sequenceNode.Equals(anotherNode));
         }
 
-        [TestMethod]
+        [Test]
         public void Two_Different_Reference_SequalNode_With_Same_Amount_And_Type_Children_Should_Be_Equal()
         {
             var sequenceNode = new SequenceNode(new SyntaxTreeNodeCollection(new List<SyntaxTreeNode>() { new TextNode("")}));
@@ -184,7 +171,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(sequenceNode.Equals(anotherNode));
         }
 
-        [TestMethod]
+        [Test]
         public void Two_Different_Reference_SequalNode_With_Same_Amount_But_Different_Type_Children_Should_Not_Be_Equal()
         {
             var sequenceNode = new SequenceNode(

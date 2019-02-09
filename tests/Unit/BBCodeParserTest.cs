@@ -2,45 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
-    [TestClass]
     public class BBCodeParserTest
     {
-        [TestMethod]
+        [Test]
         public void Test1()
         {
             Assert.AreEqual("", BBEncodeForTest("", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void Test2()
         {
             Assert.AreEqual("a", BBEncodeForTest("a", BBCodeTestUtil.StrictParsing));
             Assert.AreEqual(" a b c ", BBEncodeForTest(" a b c ", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void Test3()
         {
             Assert.AreEqual("<b></b>", BBEncodeForTest("[b][/b]", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void Test4()
         {
             Assert.AreEqual("text<b>text</b>text", BBEncodeForTest("text[b]text[/b]text", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void Test5()
         {
             Assert.AreEqual("<a href=\"http://example.org/path?name=value\">text</a>", BBEncodeForTest("[url=http://example.org/path?name=value]text[/url]", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void LeafElementWithoutContent()
         {
             Assert.AreEqual("xxxnameyyy", BBEncodeForTest("[placeholder=name]", BBCodeTestUtil.StrictParsing));
@@ -68,13 +67,13 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ImgTagHasNoContent()
         {
             Assert.AreEqual("<img src=\"url\" />", BBEncodeForTest("[img]url[/img]", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void ListItemIsAutoClosed()
         {
             Assert.AreEqual("<li>item</li>", BBEncodeForTest("[*]item", BBCodeTestUtil.StrictParsing, BBTagClosingStyle.AutoCloseElement, false));
@@ -106,7 +105,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        [TestMethod]
+        [Test]
         public void TagContentTransformer()
         {
             var parser = new BBCodeParser(new[]
@@ -117,7 +116,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual("<b>abc</b>", parser.ToHtml("[b] abc [/b]"));
         }
 
-        [TestMethod]
+        [Test]
         public void Can_Parse_With_Custom_Attribute_Value_Transformer()
         {
             var parser = new BBCodeParser(BBCodeTestUtil.StrictParsing, null, new[]
@@ -132,7 +131,7 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         //the parser may never ever throw an exception other that BBCodeParsingException for any non-null input
-        //[TestMethod]
+        //[Test]
         public void NoCrash(IExceptions errorMode, string input, BBTagClosingStyle listItemBbTagClosingStyle, out string output)
         {
             Assert.IsNotNull(errorMode);
@@ -150,14 +149,14 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        //[TestMethod]
+        //[Test]
         public void ErrorFreeModeAlwaysSucceeds(string input, out string output)
         {
             output = BBEncodeForTest(input, BBCodeTestUtil.ErrorFreeParsing);
         }
 
         //no script-tags may be contained in the output under any circumstances
-        //[TestMethod]
+        //[Test]
         public void NoScript_AnyInput(IExceptions errorMode, string input)
         {
             Assert.IsNotNull(errorMode);
@@ -173,7 +172,7 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         //no script-tags may be contained in the output under any circumstances
-        [TestMethod]
+        [Test]
         public void NoScript_AnyInput_Tree()
         {
             var parser = BBCodeTestUtil.GetParserForTest(BBCodeTestUtil.ErrorFreeParsing, true, BBTagClosingStyle.AutoCloseElement, false);
@@ -183,7 +182,7 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         //no html-chars may be contained in the output under any circumstances
-        //[TestMethod]
+        //[Test]
         public void NoHtmlChars_AnyInput(IExceptions errorMode, string input)
         {
             Assert.IsNotNull(errorMode);
@@ -199,14 +198,14 @@ namespace CodeKicker.BBCode.Tests.Unit
             }
         }
 
-        //[TestMethod]
+        //[Test]
         public void NoScript_FixedInput(IExceptions errorMode)
         {
             Assert.IsNotNull(errorMode);
             Assert.IsFalse(BBEncodeForTest("<script>", errorMode).Contains("<script"));
         }
 
-        //[TestMethod]
+        //[Test]
         public void NoScriptInAttributeValue(IExceptions errorMode)
         {
             Assert.IsNotNull(errorMode);
@@ -216,7 +215,7 @@ namespace CodeKicker.BBCode.Tests.Unit
 
         //1. given a syntax tree, encode it in BBCode, parse it back into a second syntax tree and ensure that both are exactly equal
         //2. given any syntax tree, the BBCode it represents must be parsable without error
-        //[TestMethod]
+        //[Test]
         public void Roundtrip(IExceptions errorMode, out string bbcode, out string output)
         {
             Assert.IsNotNull(errorMode);
@@ -230,7 +229,7 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
         //given a BBCode-string, parse it into a syntax tree, encode the tree in BBCode, parse it back into a second sytax tree and ensure that both are exactly equal
-        //[TestMethod]
+        //[Test]
         public void Roundtrip2(IExceptions errorMode, string input, out string bbcode, out string output)
         {
             Assert.IsNotNull(errorMode);
@@ -255,7 +254,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(tree == tree2);
         }
 
-        //[TestMethod]
+        //[Test]
         public void TextNodesCannotBeSplit(IExceptions errorMode, string input)
         {
             Assert.IsNotNull(errorMode);
@@ -302,7 +301,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             return BBCodeTestUtil.GetParserForTest(errorMode, true, listItemBbTagClosingStyle, enableIterationElementBehavior).ToHtml(bbCode).Replace("\r", "").Replace("\n", "<br/>");
         }
 
-        //[TestMethod]// Probably was a Pex test suite
+        //[Test]// Probably was a Pex test suite
         public void ToTextDoesNotCrash(string input, out string text)
         {
             var parser = BBCodeTestUtil.GetParserForTest(BBCodeTestUtil.ErrorFreeParsing, true, BBTagClosingStyle.AutoCloseElement, false);
@@ -310,7 +309,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(text.Length <= input.Length);
         }
 
-        [TestMethod]
+        [Test]
         public void StrictErrorMode()
         {
             Assert.IsTrue(BBCodeTestUtil.IsValid(@"", BBCodeTestUtil.StrictParsing));
@@ -323,7 +322,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsFalse(BBCodeTestUtil.IsValid(@"]", BBCodeTestUtil.StrictParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void CorrectingErrorMode()
         {
             Assert.IsTrue(BBCodeTestUtil.IsValid(@"", BBCodeTestUtil.ErrorCorrectorParsing));
@@ -335,7 +334,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(@"\", BBEncodeForTest(@"\\", BBCodeTestUtil.ErrorCorrectorParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void CorrectingErrorMode_EscapeCharsIgnored()
         {
             Assert.AreEqual(@"\\", BBEncodeForTest(@"\\\\", BBCodeTestUtil.ErrorCorrectorParsing));
@@ -346,7 +345,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(@"]", BBEncodeForTest(@"\]", BBCodeTestUtil.ErrorCorrectorParsing));
         }
 
-        [TestMethod]
+        [Test]
         public void TextNodeHtmlTemplate()
         {
             var parserNull = new BBCodeParser(BBCodeTestUtil.StrictParsing, null, new[]
@@ -375,7 +374,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(@"<div>abc</div><b><div>def</div></b>", parserDiv.ToHtml(@"abc[b]def[/b]"));
         }
 
-        [TestMethod]
+        [Test]
         public void ContentTransformer_EmptyAttribute_CanChooseValueFromAttributeRenderingContext()
         {
             var parser = BBCodeTestUtil.GetParserForTest(BBCodeTestUtil.StrictParsing, true, BBTagClosingStyle.AutoCloseElement, false);
@@ -384,7 +383,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(@"<a href=""http://codekicker.de"">http://codekicker.de</a>", parser.ToHtml(@"[url2=http://codekicker.de]http://codekicker.de[/url2]"));
         }
 
-        [TestMethod]
+        [Test]
         public void StopProcessingDirective_Prevent_Parsing_Child_Tags()
         {
             var parser = new BBCodeParser(BBCodeTestUtil.ErrorFreeParsing, null, new[]
@@ -410,7 +409,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(expected, parser.ToHtml(input));
         }
 
-        [TestMethod]
+        [Test]
         public void GreedyAttributeProcessing_ConsumesAllTokensForAttributeValue()
         {
             var parser = new BBCodeParser(BBCodeTestUtil.ErrorFreeParsing, null, new[]
@@ -425,7 +424,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(expected, parser.ToHtml(input));
         }
 
-        [TestMethod]
+        [Test]
         public void NewlineTrailingOpeningTagIsIgnored()
         {
             var parser = new BBCodeParser(BBCodeTestUtil.ErrorFreeParsing, null, new[] { new BBTag("code", "<pre>", "</pre>") });
@@ -436,7 +435,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(expected, parser.ToHtml(input));
         }
 
-        [TestMethod]
+        [Test]
         public void SuppressFirstNewlineAfter_StopsFirstNewlineAfterClosingTag()
         {
             var parser = new BBCodeParser(BBCodeTestUtil.ErrorFreeParsing, null, new[] { new BBTag("code", "<pre>", "</pre>"){ SuppressFirstNewlineAfter = true } });
@@ -448,7 +447,7 @@ namespace CodeKicker.BBCode.Tests.Unit
         }
 
 
-        [TestMethod]
+        [Test]
         public void ToHTML_Method_Should_Return_Only_Tag_Without_Child_Nodes_When_AutoRenderContent_is_False()
         {
             var tags = new List<BBTag>()
@@ -467,18 +466,17 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual("<strong></strong>", actual);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void ToHTML_Method_Should_Throw_ArgumentNullException_When_Null_Passed()
         {
             var parser = new BBCodeParser(new List<BBTag>());
 
-            parser.ToHtml(null);
+            Assert.Throws<ArgumentNullException>(() => parser.ToHtml(null));
         }
 
 
 
-        [TestMethod]
+        [Test]
         public void ToBBCode_Method()
         {
             var bbTags = new List<BBTag>()

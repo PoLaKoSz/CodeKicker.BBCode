@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 {
-    [TestClass]
     public class SyntaxTreeVisitorTests
     {
-        [TestMethod]
+        [Test]
         public void Visit_Method_Should_Return_Null_When_Null_Passed()
         {
             var actual = new SyntaxTreeVisitor().Visit(null);
@@ -16,7 +15,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual(null, actual);
         }
 
-        [TestMethod]
+        [Test]
         public void Visit_Method_Should_Not_Change_Parameter_Reference()
         {
             var tree = BBCodeTestUtil.GetAnyTree();
@@ -25,7 +24,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(ReferenceEquals(tree, tree2));
         }
 
-        [TestMethod]
+        [Test]
         public void IdentityModifiedTreesAreEqual()
         {
             var tree = BBCodeTestUtil.GetAnyTree();
@@ -34,7 +33,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(tree == tree2);
         }
 
-        [TestMethod]
+        [Test]
         public void TextModifiedTreesAreNotEqual()
         {
             var tree = BBCodeTestUtil.GetAnyTree();

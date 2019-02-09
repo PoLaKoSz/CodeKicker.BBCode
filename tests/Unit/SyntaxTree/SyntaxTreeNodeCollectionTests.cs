@@ -1,27 +1,24 @@
 ﻿using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 
 namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 {
-    [TestClass]
     public class SyntaxTreeNodeCollectionTests
     {
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Contructor_With_Null_Parameter_Should_Return_ArgumentNullException()
         {
-            new SyntaxTreeNodeCollection(null);
+            Assert.Throws<ArgumentNullException>(
+                () => new SyntaxTreeNodeCollection(null));
         }
 
-        [TestMethod]
+        [Test]
         public void Constructor_Without_Parameter_Has_To_Exists()
         {
             // Just for backwards compatibility.
 
             new SyntaxTreeNodeCollection();
-
-            Assert.IsTrue(true);
         }
     }
 }

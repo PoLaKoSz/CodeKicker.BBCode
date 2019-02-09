@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
@@ -118,7 +118,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             if (0 == randomBranch)
             {
                 string text = DateTime.Now.ToString();
-                Assert.IsTrue(!String.IsNullOrEmpty(text));
+                Assert.IsFalse(string.IsNullOrEmpty(text));
                 return new TextNode(text);
             }
             else if (1 == randomBranch)

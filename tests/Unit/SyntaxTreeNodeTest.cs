@@ -1,11 +1,10 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
-    [TestClass]
     public class SyntaxTreeNodeTest
     {
-        //[TestMethod]
+        //[Test]
         public void EqualTreesHaveEqualBBCode(out string bbCode1, out string bbCode2)
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();
@@ -15,7 +14,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(tree1 == tree2, bbCode1 == bbCode2);
         }
 
-        //[TestMethod]
+        //[Test]
         public void UnequalTexthasUnequalTrees(out string text1, out string text2)
         {
             var tree1 = BBCodeTestUtil.GetAnyTree();

@@ -1,21 +1,19 @@
 ﻿using CodeKicker.BBCode.SyntaxTree;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
 namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 {
-    [TestClass]
     public class TextNodeTests
     {
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void Constructor_With_Null_Text_Parameter_Should_Throw_ArgumentNullException()
         {
-            new TextNode(null);
+            Assert.Throws<ArgumentNullException>(() => new TextNode(null));
         }
 
-        [TestMethod]
+        [Test]
         public void Constructor_With_Null_HtmlTemplate_Parameter_Should_Not_Throw_Exception()
         {
             new TextNode(text: "", htmlTemplate: null);
@@ -23,7 +21,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_With_Null_HtmlTemplate_And_Empty_Text()
         {
             var textNode = new TextNode("", null);
@@ -33,7 +31,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_Without_HtmlTemplate_Escape_HTML_Characters()
         {
             var textNode = new TextNode("<b>bolded text</b>", null);
@@ -43,7 +41,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("&lt;b&gt;bolded text&lt;/b&gt;", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_With_Empty_HtmlTemplate_Should_Return_Empty_String()
         {
             var textNode = new TextNode("<b>no matter the content</b>", "");
@@ -53,7 +51,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_With_HtmlTemplate_And_Empty_Text()
         {
             var textNode = new TextNode("", "html template");
@@ -63,7 +61,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("html template", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_With_Content_Magic_HtmlTemplate_On_A_Valid_Text()
         {
             var textNode = new TextNode("https://codekicker.de", "<a href=\"${content}\">");
@@ -73,7 +71,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("<a href=\"https://codekicker.de\">", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_Replace_HtmlTemplate_NewLines()
         {
             var textNode = new TextNode("", "\n\n__\n");
@@ -83,7 +81,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("<br /><br />__<br />", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToHTM_Method_Replace_Text_NewLines()
         {
             var textNode = new TextNode("\nTEXT\n", "My ${content} content\n.");
@@ -95,7 +93,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToBBCode_With_Empty_Text_Should_Return_Empty_String()
         {
             var textNode = new TextNode("");
@@ -105,7 +103,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.AreEqual("", actual);
         }
 
-        [TestMethod]
+        [Test]
         public void ToBBCode_Should_Escape_Special_Characters()
         {
             var textNode = new TextNode("[b]My \\ text.[/b]");
@@ -117,7 +115,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
+        [Test]
         public void ToText_Method_Should_Return_Text_Property()
         {
             var textNode = new TextNode("[b]My \\ text.[/b]");
@@ -129,15 +127,13 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
 
 
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [Test]
         public void SetSubNodes_Method_Should_Return_ArgumentNullException_When_Null_Passed()
         {
-            new TextNode("").SetSubNodes(null);
+            Assert.Throws<ArgumentNullException>(() => new TextNode("").SetSubNodes(null));
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
+        [Test]
         public void SetSubNodes_Method_Should_Return_ArgumentException_When_Parameter_Has_Elements()
         {
             var textNode = new TextNode("");
@@ -146,10 +142,10 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
                 new TextNode("")
             };
 
-            var actual = textNode.SetSubNodes(subNodes);
+            Assert.Throws<ArgumentException>(() => textNode.SetSubNodes(subNodes));
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Method_Should_Return_The_Same_Reference()
         {
             var textNode = new TextNode("");
@@ -159,7 +155,7 @@ namespace CodeKicker.BBCode.Tests.Unit.SyntaxTree
             Assert.IsTrue(ReferenceEquals(textNode, actual));
         }
 
-        [TestMethod]
+        [Test]
         public void SetSubNodes_Method_Return_Type_Should_Be_TextNode()
         {
             var tagNode = new TextNode("");

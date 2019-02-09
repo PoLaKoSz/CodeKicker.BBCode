@@ -1,25 +1,23 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using NUnit.Framework;
 using System;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
-    [TestClass]
     public class BBTagTests
     {
-        [TestMethod]
-        [DataRow(null, null, null)]
-        [DataRow(null, "", "")]
-        [DataRow("", null, "")]
-        [DataRow("", "", null)]
-        [ExpectedException(typeof(ArgumentNullException))]
+        [TestCase(null, null, null)]
+        [TestCase(null, "", "")]
+        [TestCase("", null, "")]
+        [TestCase("", "", null)]
         public void Constructor_Should_Throw_ArgumentNullException_When_Null_Passed(string name, string openTagTemplate, string closeTagTemplate)
         {
-            new BBTag(name, openTagTemplate, closeTagTemplate);
+            Assert.Throws<ArgumentNullException>(
+                () => new BBTag(name, openTagTemplate, closeTagTemplate));
         }
 
 
 
-        [TestMethod]
+        [Test]
         public void FindAttribute_Method_Should_Return_Attribute_When_Its_Exists()
         {
             var attr = new BBAttribute("id", "size");
@@ -30,7 +28,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.AreEqual(attr, actual);
         }
 
-        [TestMethod]
+        [Test]
         public void FindAttribute_Method_Should_Keep_Return_Attribute_Reference()
         {
             var attr = new BBAttribute("id", "size");
@@ -41,7 +39,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsTrue(ReferenceEquals(attr, actual));
         }
 
-        [TestMethod]
+        [Test]
         public void FindAttribute_Method_Should_Return_Null_When_Attribute_With_That_Name_Not_Exists()
         {
             var attr = new BBAttribute("id", "size");
@@ -52,7 +50,7 @@ namespace CodeKicker.BBCode.Tests.Unit
             Assert.IsNull(actual);
         }
 
-        [TestMethod]
+        [Test]
         public void FindAttribute_Method_Should_Return_Null_When_Null_Parapeter_Passed()
         {
             var bbTag = new BBTag("", "", "");
