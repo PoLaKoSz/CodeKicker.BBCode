@@ -2,6 +2,7 @@
 
 namespace CodeKicker.BBCode
 {
+    [Obsolete("Please use one of these classes instead: ErrorFreeParsing / ErrorCorrectorParsing / StrictParsing.", error: false)]
     public enum ErrorMode
     {
         /// <summary>

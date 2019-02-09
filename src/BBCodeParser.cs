@@ -23,6 +23,7 @@ namespace CodeKicker.BBCode
 
         public string TextNodeHtmlTemplate { get; private set; }
 
+        [Obsolete("This property will be removed in the next major release!", error: false)]
         /// <summary>
         /// Exception throwing rule for the parser.
         /// </summary>
