@@ -54,24 +54,10 @@ namespace CodeKicker.BBCode.SyntaxTree
         {
             string content = string.Concat(SubNodes.Select(s => s.ToBBCode()).ToArray());
 
-            string attrs = "";
-            BBAttribute defAttr = Tag.FindAttribute("");
-
-            if (defAttr != null)
-            {
-                if (AttributeValues.ContainsKey(defAttr))
-                    attrs += "=" + AttributeValues[defAttr];
-            }
-
-            foreach (var attrKvp in AttributeValues)
-            {
-                if (attrKvp.Key.Name == "")
-                    continue;
-
-                attrs += " " + attrKvp.Key.Name + "=" + attrKvp.Value;
-            }
-
-            return "[" + Tag.Name + attrs + "]" + content + "[/" + Tag.Name + "]";
+            return string.Format("[{0}]{1}[/{2}]",
+                ReplaceAttributeValues(Tag.OpenTagTemplate, content),
+                (Tag.AutoRenderContent ? content : null),
+                Tag.CloseTagTemplate);
         }
 
         /// <summary>

@@ -19,4 +19,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>D:\GitHub\CodeKicker.BBCode\src\CodeKicker.BBCode.xml</DocumentationFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="HtmlTag.cs~RFc28f869.TMP" />
+  </ItemGroup>
 </Project>

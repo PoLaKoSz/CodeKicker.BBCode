@@ -20,4 +20,8 @@
     <ProjectReference Include="..\..\src\CodeKicker.BBCode.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="HtmlParserTests\" />
+  </ItemGroup>
+
 </Project>
