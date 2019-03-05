@@ -34,5 +34,7 @@ namespace CodeKicker.BBCode.HtmlComponents
         internal abstract string ParseTagEnd(string input, ref int pos, IExceptions exception);
 
         internal abstract bool CanHaveTextNode(string text);
+
+        internal abstract void CheckUserParameters();
     }
 }

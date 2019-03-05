@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodeKicker.BBCode.Exceptions;
+using CodeKicker.BBCode.SyntaxTree;
 
 namespace CodeKicker.BBCode
 {
@@ -34,6 +35,11 @@ namespace CodeKicker.BBCode
             throw new BBCodeParsingException(base.TagNotClosed(tagName));
         }
 
+        void IExceptions.TagNotClosed(Node node)
+        {
+            throw new ParserException(base.TagNotClosed(node));
+        }
+
         bool IExceptions.TagNotMatching(string startTagName, string endTagName)
         {
             throw new BBCodeParsingException(base.TagNotMatching(startTagName, endTagName));
@@ -52,6 +58,17 @@ namespace CodeKicker.BBCode
         bool IExceptions.UnknownTag(string tagName)
         {
             throw new BBCodeParsingException(base.UnknownTag(tagName));
+        }
+
+        /// <summary>
+        /// The specified tag does not exist in the user defined rules.
+        /// </summary>
+        /// <param name="tagName">Non null name of the unknown tag.</param>
+        /// <param name="index">The position where the tag begins.</param>
+        /// <returns>Non null formatted string.</returns>
+        bool IExceptions.UnknownTag(string tagName, int index)
+        {
+            throw new ParserException(base.TagNotClosed(tagName, index));
         }
     }
 }

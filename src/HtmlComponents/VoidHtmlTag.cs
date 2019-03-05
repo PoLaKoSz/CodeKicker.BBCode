@@ -81,6 +81,8 @@ namespace CodeKicker.BBCode.HtmlComponents
         }
 
 
+        internal override void CheckUserParameters() { }
+
         internal override string ToBBCode(string content)
         {
             return ResultTag.ToBBCode(Attributes, content);

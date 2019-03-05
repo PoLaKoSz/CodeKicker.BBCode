@@ -1,4 +1,4 @@
-﻿using System;
+﻿using CodeKicker.BBCode.SyntaxTree;
 
 namespace CodeKicker.BBCode
 {
@@ -48,6 +48,8 @@ namespace CodeKicker.BBCode
         /// <returns>Non null formatted string.</returns>
         bool TagNotClosed(string tagName);
 
+        void TagNotClosed(Node node);
+
         /// <summary>
         /// The end-tag {startTagName} does not match the preceding start-tag {endTagName}.
         /// </summary>
@@ -77,5 +79,13 @@ namespace CodeKicker.BBCode
         /// <param name="tagName">Non null name of the unknown tag.</param>
         /// <returns>Non null formatted string.</returns>
         bool UnknownTag(string tagName);
+
+        /// <summary>
+        /// The specified tag does not exist in the user defined rules.
+        /// </summary>
+        /// <param name="tagName">Non null name of the unknown tag.</param>
+        /// <param name="index">The position where the tag begins.</param>
+        /// <returns>Non null formatted string.</returns>
+        bool UnknownTag(string tagName, int index);
     }
 }

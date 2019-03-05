@@ -6,107 +6,13 @@ using System.Collections.Generic;
 
 namespace CodeKicker.BBCode.Tests.Unit
 {
-    public class HtmlParserBase
+    public class HtmlParserTest
     {
-        // -------   Only 1 tag parsing rule
-
         [Test]
         public void Constructor_Null_As_Tag_Rules()
         {
-            Assert.Throws<ArgumentNullException>(() => new HtmlParser(null));
+            Assert.Throws<ArgumentNullException>(() => new CodeKicker.BBCode.HtmlParser(null));
         }
-
-        [Test]
-        public void VoidHtmlTag_Without_Attribute_To_SimpleTag()
-        {
-            var tags = new List<HtmlTag>()
-            {
-                VoidHtmlTag.CreateFrom("img")
-                    .ParseTo(new SimpleTag("img"))
-            };
-            var parser = new HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<img>");
-
-
-            Assert.AreEqual("[img][/img]", actual);
-        }
-
-        [Test]
-        public void VoidHtmlTag_Without_Attribute_And_Text_To_SimpleTag()
-        {
-            var tags = new List<HtmlTag>()
-            {
-                VoidHtmlTag.CreateFrom("img")
-                    .ParseTo(new SimpleTag("img"))
-            };
-            var parser = new HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<img>text");
-
-
-            Assert.AreEqual("[img][/img]text", actual);
-        }
-
-        [Test]
-        public void VoidHtmlTag_With_One_Attribute_To_SimpleTag()
-        {
-            var tags = new List<HtmlTag>()
-            {
-                VoidHtmlTag.CreateFrom("img")
-                    .WithA(new Attribute("src"))
-                    .ParseTo(new SimpleTag("img"))
-            };
-            var parser = new HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<img src=\"a.jpg\">");
-
-
-            Assert.AreEqual("[img]a.jpg[/img]", actual);
-        }
-
-        [Test]
-        public void VoidHtmlTag_With_Two_Attributes_To_SimpleTag()
-        {
-            var tags = new List<HtmlTag>()
-            {
-                VoidHtmlTag.CreateFrom("img")
-                    .WithA(new Attribute("src"))
-                    .WithA(new Attribute("style"))
-                    .ParseTo(new SimpleTag("img"))
-            };
-            var parser = new HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<img src=\"a.jpg\" style=\"bold\">");
-
-
-            Assert.AreEqual("[img]a.jpgbold[/img]", actual);
-        }
-
-        [Test]
-        public void VoidHtmlTag_With_One_Attribute_And_One_Skipped_Attribute_To_SimpleTag()
-        {
-            var tags = new List<HtmlTag>()
-            {
-                VoidHtmlTag.CreateFrom("img")
-                    .WithA(new Attribute("src"))
-                    .SkipAttribute("style")
-                    .ParseTo(new SimpleTag("img"))
-            };
-            var parser = new HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<img src=\"a.jpg\" style=\"bold\">");
-
-
-            Assert.AreEqual("[img]a.jpg[/img]", actual);
-        }
-
-        // -------   Only 1 tag parsing rule END
 
 
 
@@ -132,7 +38,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .SkipAttribute("class")
                     .ParseTo(new CodeTag())
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
             string input =
                 "<strong>" +
                     "<em>Hi!</em>" +
@@ -175,7 +81,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("b")
                     .ParseTo(new SimpleTag("b"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<b>Hi there!</b>");
@@ -192,7 +98,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("em")
                     .ParseTo(new SimpleTag("i"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<em>Hi there!</em>");
@@ -210,7 +116,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .SkipAttribute("style")
                     .ParseTo(new SimpleTag("u"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<span style=\"text-decoration:underline\">Hi there!</span>");
@@ -228,7 +134,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .WithA(new Attribute("style", value => value.Substring("font-size:".Length, 4)))
                     .ParseTo(new ValueTag("size"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<span style=\"font-size:14px;\">Hi there!</span>");
@@ -261,7 +167,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     }))
                     .ParseTo(new ValueTag("color"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<span style=\"color:red;\">red</span>, <span style=\"color:green;\">green</span>, <span style=\"color:rgb(255,157,36);\">custom</span>");
@@ -280,7 +186,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .SkipAttribute("class")
                     .ParseTo(new ValueTag("quote"));
 
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<div class=\"quote\"><strong>JohnF.Kennedy wrote:</strong>Those who dare to fail miserably can achieve greatly.</div>");
@@ -298,7 +204,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .SkipAttribute("class")
                     .ParseTo(new ValueTag("quote"));
 
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<div class=\"quote\"><strong>Stephen King wrote:</strong>Get busy living or get busy dying.</div>");
@@ -323,7 +229,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                                     .KeyValue("author")
                                     .KeyValue("date")));
 
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<div class=\"quote\"><strong>JohnF.Kennedy wrote:</strong><span>2019-02-28</span>Those who dare to fail miserably can achieve greatly.</div>");
@@ -342,7 +248,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .SkipTextNode("Click me!")
                     .ParseTo(new SimpleTag("url"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<a href=\"https://polakosz.hu/\">Click me!</a>");
@@ -361,7 +267,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .WithA(new Attribute("href"))
                     .ParseTo(new ValueTag("url"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<a href=\"https://polakosz.hu/\">Click me!</a>");
@@ -381,7 +287,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     new Attribute("src"),
                 })
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<img src=\"https://www.bbcode.org/images/lubeck_small.jpg\" alt=\"\">");
@@ -403,7 +309,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .ParseTo(ValueTag.New("img", attrValueTemplate: "${width}x${height}")
                                 .WithTextNodeFrom("src"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<img src=\"https://www.bbcode.org/images/lubeck_small.jpg\" alt=\"\" width=\"100\" height=\"50\">");
@@ -430,7 +336,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                             .KeyValue("alt")
                             .KeyValue("title")))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<img alt=\"Lubeck city gate\" title=\"This is one of the medieval city gates of Lubeck\" src=\"https://www.bbcode.org/images/lubeck_small.jpg\" width=\"100\" height=\"50\">");
@@ -449,7 +355,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("li")
                     .ParseTo(new SimpleTag("li"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -476,7 +382,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("li")
                     .ParseTo(new SimpleTag("li"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -503,7 +409,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("li")
                     .ParseTo(new SimpleTag("li"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -528,7 +434,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("code")
                     .ParseTo(new SimpleTag("code"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -549,7 +455,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("code")
                     .ParseTo(new CodeTag())
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -576,7 +482,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                 ClosedHtmlTag.CreateFrom("td")
                     .ParseTo(new SimpleTag("td"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -615,7 +521,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .SkipAttribute("allowfullscreen")
                     .ParseTo(new SimpleTag("youtube"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<iframe width=\"560\" height=\"315\" src=\"https://www.youtube.com/embed/6jP0z4Z3M98?controls=0\" frameborder=\"0\" allow=\"accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture\" allowfullscreen></iframe>");
@@ -637,7 +543,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .WithA(new ExactAttribute("style", "font-style: italic;"))
                     .ParseTo(new SimpleTag("i"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -665,7 +571,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                         .AsA(new Attribute("strong"))
                     .ParseTo(new ValueTag("quote")));
 
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode(
@@ -687,7 +593,7 @@ namespace CodeKicker.BBCode.Tests.Unit
                     .WithA(new Attribute("style"))
                     .ParseTo(new SimpleTag("b"))
             };
-            var parser = new HtmlParser(tags);
+            var parser = new CodeKicker.BBCode.HtmlParser(tags);
 
 
             string actual = parser.ToBBCode("<strong>(...)</strong>");

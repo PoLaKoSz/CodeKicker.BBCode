@@ -52,7 +52,8 @@ namespace CodeKicker.BBCode
             return ToTree(htmlCode).ToBBCode();
         }
 
-        public SequenceNode ToTree(string htmlCode)
+
+        private SequenceNode ToTree(string htmlCode)
         {
             if (htmlCode == null)
                 throw new ArgumentNullException(nameof(htmlCode), "Parser can't work with null!");
@@ -60,11 +61,15 @@ namespace CodeKicker.BBCode
             return ParseSyntaxTree(htmlCode);
         }
 
-
         private SequenceNode ParseSyntaxTree(string input)
         {
             if (input == null)
                 throw new ArgumentNullException(nameof(input));
+
+            foreach (var tag in _tagRules)
+            {
+                tag.CheckUserParameters();
+            }
 
             Stack<SyntaxTreeNode> stack = new Stack<SyntaxTreeNode>();
             SequenceNode rootNode = new SequenceNode();
@@ -91,7 +96,7 @@ namespace CodeKicker.BBCode
             {
                 var node = (Node)stack.Pop();
 
-                _exception.TagNotClosed(node.Tag.OpenTag);
+                _exception.TagNotClosed(node);
             }
 
             if (stack.Count != 1)
@@ -249,8 +254,10 @@ namespace CodeKicker.BBCode
                     break;
             }
 
-            if (resultNode == null)
+            if (resultNode == null && _exception.UnknownTag(tagName, currentIndex - tagName.Length))
                 return null;
+
+            resultNode.Index = currentIndex - tagName.Length;
 
             if (!ParseChar(input, ref currentIndex, _endTag) && _exception.TagNotClosed(tagName))
                 return null;

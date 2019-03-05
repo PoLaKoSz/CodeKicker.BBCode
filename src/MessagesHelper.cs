@@ -1,4 +1,5 @@
-﻿using System.Resources;
+﻿using CodeKicker.BBCode.SyntaxTree;
+using System.Resources;
 
 namespace CodeKicker.BBCode
 {
@@ -78,6 +79,21 @@ namespace CodeKicker.BBCode
         }
 
         /// <summary>
+        /// The tag {tagName} was not closed correctly.
+        /// </summary>
+        /// <param name="tagName">Non null name of the not closed tag.</param>
+        /// <returns>Non null formatted string.</returns>
+        protected string TagNotClosed(Node node)
+        {
+            return TagNotClosed(node.Tag.OpenTag, node.Index);
+        }
+
+        protected string TagNotClosed(string tagName, int index)
+        {
+            return GetString("TagNodeNotClosed", tagName, index);
+        }
+
+        /// <summary>
         /// The end-tag {startTagName} does not match the preceding start-tag {endTagName}.
         /// </summary>
         /// <param name="startTagName">Non null name of the attribute owner.</param>
@@ -118,14 +134,13 @@ namespace CodeKicker.BBCode
         {
             return GetString("UnknownTag", tagName);
         }
-
-
-        private string GetString(string key)
+        
+        protected string GetString(string key)
         {
             return _resMgr.GetString(key);
         }
 
-        private string GetString(string key, params string[] parameters)
+        protected string GetString(string key, params object[] parameters)
         {
             return string.Format(_resMgr.GetString(key), parameters);
         }

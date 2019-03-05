@@ -7,6 +7,7 @@ namespace CodeKicker.BBCode.SyntaxTree
 {
     public class Node : SyntaxTreeNode
     {
+        public int Index { get; internal set; }
         internal HtmlTag Tag { get; }
 
 

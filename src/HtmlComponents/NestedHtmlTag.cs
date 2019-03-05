@@ -1,4 +1,5 @@
-﻿using CodeKicker.BBCode.SyntaxTree;
+﻿using CodeKicker.BBCode.Exceptions;
+using CodeKicker.BBCode.SyntaxTree;
 using CodeKicker.BBCode.Tags.BB;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace CodeKicker.BBCode.HtmlComponents
             return this;
         }
 
-        public NestedHtmlTag WithChild(VoidHtmlTag tag)
+        public NestedHtmlTag WithChild(HtmlTag tag)
         {
             _childTags.Add(tag);
 
@@ -71,6 +72,13 @@ namespace CodeKicker.BBCode.HtmlComponents
             return _childTags;
         }
 
+
+        internal override void CheckUserParameters()
+        {
+            if (_childTags.Count < _attributes.Count)
+                throw new ParserException($"The tag with name {OpenTag} has more alias for children than child alone!");
+        }
+
         internal override Node IsThisTag(string tagName, Dictionary<string, string> attrs, Stack<SyntaxTreeNode> stack, IExceptions exceptionMode)
         {
             if (!OpenTag.Equals(tagName))
@@ -84,9 +92,6 @@ namespace CodeKicker.BBCode.HtmlComponents
 
         internal override string ToBBCode(string content)
         {
-            if (_childTags.Count < _attributes.Count)
-                throw new BBCodeParsingException($"The tag with name {OpenTag} has more alias for children than child alone!");
-
             content = NestedAttributeManager.Replace(content, _attributes);
 
             Attributes.AddRange(_attributes);
