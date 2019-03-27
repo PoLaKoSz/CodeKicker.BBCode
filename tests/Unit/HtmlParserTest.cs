@@ -179,63 +179,66 @@ namespace CodeKicker.BBCode.Tests.Unit
         [Test]
         public void Named_Quote()
         {
-            var tags = 
-                NestedHtmlTag.CreateFrom("div")
-                    .WithChild(new ClosedHtmlTag("strong"))
-                        .AsA(new Attribute("author", a => a.Substring(0, a.IndexOf(" wrote:"))))
-                    .SkipAttribute("class")
-                    .ParseTo(new ValueTag("quote"));
+            Assert.Fail("Refactoring");
+            //var tags = 
+            //    NestedHtmlTag.CreateFrom("div")
+            //        .WithChild(new ClosedHtmlTag("strong"))
+            //            .AsA(new Attribute("author", a => a.Substring(0, a.IndexOf(" wrote:"))))
+            //        .SkipAttribute("class")
+            //        .ParseTo(new ValueTag("quote"));
 
-            var parser = new CodeKicker.BBCode.HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<div class=\"quote\"><strong>JohnF.Kennedy wrote:</strong>Those who dare to fail miserably can achieve greatly.</div>");
+            //var parser = new HtmlParser(tags);
 
 
-            Assert.AreEqual("[quote=JohnF.Kennedy]Those who dare to fail miserably can achieve greatly.[/quote]", actual);
+            //string actual = parser.ToBBCode("<div class=\"quote\"><strong>JohnF.Kennedy wrote:</strong>Those who dare to fail miserably can achieve greatly.</div>");
+
+
+            //Assert.AreEqual("[quote=JohnF.Kennedy]Those who dare to fail miserably can achieve greatly.[/quote]", actual);
         }
 
         [Test]
         public void Named_Quote_With_Space()
         {
-            var tags = NestedHtmlTag.CreateFrom("div")
-                    .WithChild(new ClosedHtmlTag("strong"))
-                        .AsA(new Attribute("author", a => a.Substring(0, a.IndexOf(" wrote:"))))
-                    .SkipAttribute("class")
-                    .ParseTo(new ValueTag("quote"));
+            Assert.Fail("Refactoring");
+            //var tags = NestedHtmlTag.CreateFrom("div")
+            //        .WithChild(new ClosedHtmlTag("strong"))
+            //            .AsA(new Attribute("author", a => a.Substring(0, a.IndexOf(" wrote:"))))
+            //        .SkipAttribute("class")
+            //        .ParseTo(new ValueTag("quote"));
 
-            var parser = new CodeKicker.BBCode.HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<div class=\"quote\"><strong>Stephen King wrote:</strong>Get busy living or get busy dying.</div>");
+            //var parser = new HtmlParser(tags);
 
 
-            Assert.AreEqual("[quote=Stephen King]Get busy living or get busy dying.[/quote]", actual);
+            //string actual = parser.ToBBCode("<div class=\"quote\"><strong>Stephen King wrote:</strong>Get busy living or get busy dying.</div>");
+
+
+            //Assert.AreEqual("[quote=Stephen King]Get busy living or get busy dying.[/quote]", actual);
         }
 
         [Test]
         public void Named_Quote_With_Other_Attributes()
         {
-            var tags =
-                NestedHtmlTag.CreateFrom("div")
-                    .WithA(new Attribute("class"))
-                    .WithChild(new ClosedHtmlTag("strong"))
-                        .AsA(new Attribute("author", a => a.Substring(0, a.IndexOf(" wrote:"))))
-                    .WithChild(new ClosedHtmlTag("span"))
-                        .AsA(new Attribute("date"))
-                    .SkipAttribute("class")
-                    .ParseTo(new ParameterizedTag("quote",
-                                new AttributeGenerator()
-                                    .KeyValue("author")
-                                    .KeyValue("date")));
+            Assert.Fail("Refactoring");
+            //var tags =
+            //    NestedHtmlTag.CreateFrom("div")
+            //        .WithA(new Attribute("class"))
+            //        .WithChild(new ClosedHtmlTag("strong"))
+            //            .AsA(new Attribute("author", a => a.Substring(0, a.IndexOf(" wrote:"))))
+            //        .WithChild(new ClosedHtmlTag("span"))
+            //            .AsA(new Attribute("date"))
+            //        .SkipAttribute("class")
+            //        .ParseTo(new ParameterizedTag("quote",
+            //                    new AttributeGenerator()
+            //                        .KeyValue("author")
+            //                        .KeyValue("date")));
 
-            var parser = new CodeKicker.BBCode.HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode("<div class=\"quote\"><strong>JohnF.Kennedy wrote:</strong><span>2019-02-28</span>Those who dare to fail miserably can achieve greatly.</div>");
+            //var parser = new HtmlParser(tags);
 
 
-            Assert.AreEqual("[quote author=\"JohnF.Kennedy\" date=\"2019-02-28\"]Those who dare to fail miserably can achieve greatly.[/quote]", actual);
+            //string actual = parser.ToBBCode("<div class=\"quote\"><strong>JohnF.Kennedy wrote:</strong><span>2019-02-28</span>Those who dare to fail miserably can achieve greatly.</div>");
+
+
+            //Assert.AreEqual("[quote author=\"JohnF.Kennedy\" date=\"2019-02-28\"]Those who dare to fail miserably can achieve greatly.[/quote]", actual);
         }
 
         [Test]
@@ -560,28 +563,29 @@ namespace CodeKicker.BBCode.Tests.Unit
         [Test]
         public void Nested_Tag_Child_Colliding_With_An_Another_Rule()
         {
-            var tags = new List<HtmlTag>()
-            {
-                ClosedHtmlTag.CreateFrom("strong")
-                    .ParseTo(new SimpleTag("b"))
-            };
-            tags.AddRange(
-                NestedHtmlTag.CreateFrom("div")
-                    .WithChild(new ClosedHtmlTag("strong"))
-                        .AsA(new Attribute("strong"))
-                    .ParseTo(new ValueTag("quote")));
+            Assert.Fail("Refactoring");
+            //var tags = new List<HtmlTag>()
+            //{
+            //    ClosedHtmlTag.CreateFrom("strong")
+            //        .ParseTo(new SimpleTag("b"))
+            //};
+            //tags.AddRange(
+            //    NestedHtmlTag.CreateFrom("div")
+            //        .WithChild(new ClosedHtmlTag("strong"))
+            //            .AsA(new Attribute("strong"))
+            //        .ParseTo(new ValueTag("quote")));
 
-            var parser = new CodeKicker.BBCode.HtmlParser(tags);
-
-
-            string actual = parser.ToBBCode(
-                "<div>" +
-                    "<strong>div-child</strong>" +
-                "</div>" +
-                "<strong>non div child</strong>");
+            //var parser = new HtmlParser(tags);
 
 
-            Assert.AreEqual("[quote=div-child][/quote][b]non div child[/b]", actual);
+            //string actual = parser.ToBBCode(
+            //    "<div>" +
+            //        "<strong>div-child</strong>" +
+            //    "</div>" +
+            //    "<strong>non div child</strong>");
+
+
+            //Assert.AreEqual("[quote=div-child][/quote][b]non div child[/b]", actual);
         }
 
         [Test]

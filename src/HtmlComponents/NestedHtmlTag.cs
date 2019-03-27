@@ -63,13 +63,22 @@ namespace CodeKicker.BBCode.HtmlComponents
             return this;
         }
 
-        public new List<HtmlTag> ParseTo(IBBTag output)
+        //public new List<HtmlTag> ParseTo(IBBTag output)
+        //{
+        //    ResultTag = output;
+
+        //    _childTags.Add(this);
+
+        //    return _childTags;
+        //}
+
+        public new HtmlTag ParseTo(IBBTag output)
         {
             ResultTag = output;
 
             _childTags.Add(this);
 
-            return _childTags;
+            return this;
         }
 
 
